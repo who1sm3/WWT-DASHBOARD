@@ -17,36 +17,42 @@
     <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
 </head>
 <body>
-    <!-- Authorization Splash Screen -->
-    <div class="splash-screen" id="splashScreen">
-        <div class="splash-particles" id="splashParticles"></div>
-        <div class="splash-content">
-            <div class="splash-logo">
-                <img src="logo.png" alt="WWT" width="48" height="48">
-                <span>WWT Alert Management</span>
+    <!-- Cinematic Cyber Intro (plays for ~3.5s before auth splash) -->
+    <div class="intro-splash" id="introSplash" aria-hidden="true">
+        <canvas class="intro-matrix" id="introMatrix"></canvas>
+        <div class="intro-grid"></div>
+        <div class="intro-vignette"></div>
+        <div class="intro-scanline"></div>
+        <div class="intro-noise"></div>
+
+        <div class="intro-content" id="introContent">
+            <div class="intro-logo-wrap">
+                <div class="intro-logo-glow"></div>
+                <img src="logo-nc4.png" alt="WWT" class="intro-logo" id="introLogo"
+                     onerror="this.onerror=null;this.src='logo.png';">
             </div>
-            <div class="palm-container" id="palmContainer">
-                <img src="palm.png" alt="Biometric Scan" class="palm-image" id="palmImage">
-                <div class="scan-line" id="scanLine"></div>
-                <div class="scan-corners">
-                    <span class="corner tl"></span><span class="corner tr"></span>
-                    <span class="corner bl"></span><span class="corner br"></span>
-                </div>
-                <div class="scan-overlay" id="scanOverlay"></div>
+
+            <h1 class="intro-title glitch" id="introTitle" data-text="WWT Alert Management">
+                WWT Alert Management
+            </h1>
+            <div class="intro-subtitle" id="introSubtitle">
+                <span class="intro-dot"></span> SECURITY OPERATIONS CENTER <span class="intro-dot"></span>
             </div>
-            <p class="splash-subtitle" id="splashSubtitle">Biometric Identity Verification</p>
-            <button class="auth-btn" id="authBtn">
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0110 0v4"/></svg>
-                <span>Authorize</span>
-            </button>
-            <div class="access-granted" id="accessGranted">
-                <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 11.08V12a10 10 0 11-5.93-9.14"/><path d="M22 4L12 14.01l-3-3"/></svg>
-                <span>ACCESS GRANTED</span>
+
+            <div class="intro-boot" id="introBoot">
+                <span class="boot-line" data-delay="200">&gt; Initializing secure channel...</span>
+                <span class="boot-line" data-delay="500">&gt; Loading threat intelligence...</span>
+                <span class="boot-line" data-delay="900">&gt; Verifying cryptographic integrity...</span>
+                <span class="boot-line ok" data-delay="1500">&gt; System online <span class="boot-ok">[ OK ]</span></span>
+            </div>
+
+            <div class="intro-credit">
+                Made with <span class="intro-heart" aria-label="love">&#10084;</span> by <strong>Amin Ayob</strong> using AI
             </div>
         </div>
     </div>
 
-    <!-- Dashboard (hidden until authorized) -->
+    <!-- Dashboard (hidden until intro completes) -->
     <div class="dashboard-wrap" id="dashboardWrap" style="display:none">
 
     <!-- Sidebar Navigation -->
@@ -63,19 +69,27 @@
                 <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="9" rx="1"/><rect x="14" y="3" width="7" height="5" rx="1"/><rect x="14" y="12" width="7" height="9" rx="1"/><rect x="3" y="16" width="7" height="5" rx="1"/></svg>
                 <span>Dashboard</span>
             </button>
+            <button class="nav-item" data-view="analytics">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 20V10M12 20V4M6 20v-6"/></svg>
+                <span>Analytics</span>
+            </button>
             <button class="nav-item" data-view="alerts">
                 <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8A6 6 0 006 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 01-3.46 0"/></svg>
                 <span>Alerts</span>
                 <span class="nav-badge" id="navAlertCount">0</span>
             </button>
-            <button class="nav-item" data-view="analytics">
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 20V10M12 20V4M6 20v-6"/></svg>
-                <span>Analytics</span>
+            <button class="nav-item" data-view="dorking">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/><path d="M8 11h6M11 8v6"/></svg>
+                <span>Dorking</span>
+                <span class="nav-badge" id="navDorkCount">0</span>
             </button>
         </nav>
         <div class="sidebar-foot">
             <div class="status-indicator"><span class="pulse-dot"></span> Live</div>
             <span class="sidebar-version">v4.0</span>
+        </div>
+        <div class="sidebar-credit">
+            Made with <span class="credit-heart" aria-label="love">&#10084;</span> by <strong>Amin Ayob</strong> using AI
         </div>
     </aside>
 
@@ -164,6 +178,9 @@
             <div class="search-box">
                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg>
                 <input type="text" id="searchInput" placeholder="Search alerts..." autocomplete="off">
+                <button type="button" class="search-clear" data-clear="searchInput" aria-label="Clear search" title="Clear">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M18 6L6 18M6 6l12 12"/></svg>
+                </button>
                 <kbd>Ctrl+K</kbd>
             </div>
             <div class="filter-group" role="radiogroup" aria-label="Status filter">
@@ -259,6 +276,49 @@
         </div>
     </section>
 
+    <!-- Dorking View -->
+    <section class="view" id="viewDorking" aria-label="Dorking">
+        <section class="controls-section" aria-label="Dork filters">
+            <div class="controls-bar">
+                <div class="search-box">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg>
+                    <input type="text" id="dorkSearch" placeholder="Search dorks..." autocomplete="off">
+                    <button type="button" class="search-clear" data-clear="dorkSearch" aria-label="Clear search" title="Clear">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M18 6L6 18M6 6l12 12"/></svg>
+                    </button>
+                </div>
+                <div class="select-wrap">
+                    <select id="dorkCategoryFilter" aria-label="Filter by category">
+                        <option value="all">All Categories</option>
+                    </select>
+                </div>
+                <div class="select-wrap">
+                    <select id="dorkEngine" aria-label="Search engine" title="Search engine used when clicking a dork">
+                        <option value="google">Google</option>
+                        <option value="bing">Bing</option>
+                        <option value="duckduckgo">DuckDuckGo</option>
+                        <option value="yandex">Yandex</option>
+                    </select>
+                </div>
+                <button class="btn btn-primary" id="addDorkBtn">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14M5 12h14"/></svg>
+                    <span>New Dork</span>
+                </button>
+            </div>
+        </section>
+
+        <div class="dork-hint panel" style="margin-top:14px;">
+            <div class="panel-head">
+                <div>
+                    <h3>Google Dorking Library</h3>
+                    <span class="chart-sub">Click any query to run it on the selected search engine. Use responsibly — authorized testing only.</span>
+                </div>
+            </div>
+        </div>
+
+        <div id="dorkGroups" class="dork-groups"></div>
+    </section>
+
     </main><!-- /main-area -->
 
     <!-- Add Modal -->
@@ -317,6 +377,24 @@
         <div class="detail-panel">
             <div class="detail-header"><h3>Alert Details</h3><button class="modal-close" id="closeDetail">&times;</button></div>
             <div class="detail-body" id="detailBody"></div>
+        </div>
+    </div>
+
+    <!-- Dork Add/Edit Modal -->
+    <div class="modal-overlay" id="dorkModal">
+        <div class="modal">
+            <div class="modal-header"><h2 id="dorkModalTitle"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg>New Dork</h2><button class="modal-close" id="closeDorkModal">&times;</button></div>
+            <div class="modal-body">
+                <div class="form-group"><label>Title <span class="required">*</span></label><input type="text" id="dorkTitle" placeholder="e.g. WordPress admin login"></div>
+                <div class="form-group"><label>Category</label><input type="text" id="dorkCategory" placeholder="e.g. Admin & Login" list="dorkCategoryList"><datalist id="dorkCategoryList"></datalist></div>
+                <div class="form-group"><label>Query <span class="required">*</span></label><textarea id="dorkQuery" placeholder='e.g. inurl:"/wp-admin/" intitle:"Log In"' rows="3"></textarea></div>
+                <div class="form-group"><label>Description</label><textarea id="dorkDescription" placeholder="What this dork finds..." rows="2"></textarea></div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-danger" id="dorkDeleteBtn" style="margin-right:auto;display:none">Delete</button>
+                <button class="btn btn-outline" id="cancelDorkModal">Cancel</button>
+                <button class="btn btn-primary" id="saveDorkBtn">Save Dork</button>
+            </div>
         </div>
     </div>
 

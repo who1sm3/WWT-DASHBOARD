@@ -127,6 +127,13 @@ async function init() {
     renderTable();
     updateStats();   // also calls updateCharts() and renderRecent()
 
+    // Dorking module (separate DB on the server)
+    await loadDorks();
+    bindDorkEvents();
+    renderDorks();
+
+    bindSearchClears();
+
     // Keep this PC in sync with edits made on other PCs
     setInterval(pollServer, POLL_INTERVAL_MS);
 }
@@ -275,7 +282,8 @@ function bindNav() {
     const titles = {
         dashboard: { t: 'Dashboard', s: 'Overview of all security alerts' },
         alerts:    { t: 'Alerts',    s: 'Manage and triage all recorded alerts' },
-        analytics: { t: 'Analytics', s: 'Deeper trends across agencies and types' }
+        analytics: { t: 'Analytics', s: 'Deeper trends across agencies and types' },
+        dorking:   { t: 'Dorking',   s: 'Saved dork queries for attack-surface recon' }
     };
     const go = view => {
         document.querySelectorAll('.nav-item').forEach(n => n.classList.toggle('active', n.dataset.view === view));
@@ -283,6 +291,12 @@ function bindNav() {
         const meta = titles[view] || titles.dashboard;
         document.getElementById('pageTitle').textContent = meta.t;
         document.getElementById('pageSub').textContent = meta.s;
+        // Hide alert-only top-bar actions on the Dorking view
+        const hideOnDork = view === 'dorking';
+        ['addNewBtn', 'exportBtn', 'importBtn'].forEach(id => {
+            const el = document.getElementById(id);
+            if (el) el.style.display = hideOnDork ? 'none' : '';
+        });
         // Recompute chart sizes on show (Chart.js needs a visible canvas)
         requestAnimationFrame(updateCharts);
         document.getElementById('sidebar')?.classList.remove('open');
@@ -763,81 +777,397 @@ function splitIocs(str) {
 }
 function iocHref(v) { return v.startsWith('http') ? v : 'https://' + v; }
 
-// ── Splash Screen ──
-function initSplash() {
-    // Spawn floating particles
-    const pc = document.getElementById('splashParticles');
-    for (let i = 0; i < 40; i++) {
-        const p = document.createElement('div');
-        p.className = 'splash-particle';
-        p.style.left = Math.random() * 100 + '%';
-        p.style.top = Math.random() * 100 + '%';
-        p.style.animationDelay = (Math.random() * 6) + 's';
-        p.style.animationDuration = (4 + Math.random() * 4) + 's';
-        pc.appendChild(p);
-    }
-
-    document.getElementById('authBtn').addEventListener('click', startAuth);
-}
-
-function startAuth() {
-    const btn = document.getElementById('authBtn');
-    const palm = document.getElementById('palmContainer');
-    const sub = document.getElementById('splashSubtitle');
-
-    // Hide button, start scanning
-    btn.classList.add('hidden');
-    palm.classList.add('scanning');
-    sub.textContent = 'Scanning biometric data...';
-    sub.className = 'splash-subtitle scanning-text';
-
-    // After scan animation (1.8s × 2 passes = ~3.6s)
-    setTimeout(() => {
-        palm.classList.remove('scanning');
-        palm.classList.add('success');
-        sub.textContent = 'Identity verified';
-        sub.className = 'splash-subtitle success-text';
-
-        // Show ACCESS GRANTED
-        markAuthorized();
-        document.getElementById('accessGranted').classList.add('show');
-
-        // Fade out splash and show dashboard
-        setTimeout(() => {
-            document.getElementById('splashScreen').classList.add('fade-out');
-            document.getElementById('dashboardWrap').style.display = '';
-            init(); // Initialize dashboard
-
-            // Remove splash from DOM after transition
-            setTimeout(() => {
-                const splash = document.getElementById('splashScreen');
-                if (splash) splash.remove();
-            }, 700);
-        }, 1200);
-    }, 3800);
-}
-
-const AUTH_KEY = 'wwt_auth_expires';
-const AUTH_TTL_MS = 60 * 60 * 1000;
-
-function isAuthValid() {
-    const exp = parseInt(localStorage.getItem(AUTH_KEY) || '0', 10);
-    return exp && Date.now() < exp;
-}
-
-function markAuthorized() {
-    localStorage.setItem(AUTH_KEY, String(Date.now() + AUTH_TTL_MS));
-}
-
-function skipSplash() {
-    const splash = document.getElementById('splashScreen');
-    if (splash) splash.remove();
+// ── Reveal dashboard after intro ──
+function revealDashboard() {
     document.getElementById('dashboardWrap').style.display = '';
     init();
 }
 
+// ── Search-box clear (×) buttons ──
+function bindSearchClears() {
+    document.querySelectorAll('.search-box').forEach(box => {
+        const input = box.querySelector('input');
+        const btn = box.querySelector('.search-clear');
+        if (!input || !btn) return;
+        const sync = () => box.classList.toggle('has-value', input.value.length > 0);
+        input.addEventListener('input', sync);
+        btn.addEventListener('click', () => {
+            input.value = '';
+            sync();
+            input.focus();
+            input.dispatchEvent(new Event('input', { bubbles: true }));
+        });
+        sync();
+    });
+}
+
+/* ============================================================
+   Cinematic Cyber Intro (plays for ~3.5s, then hands off)
+   ============================================================ */
+function runCyberIntro(onDone) {
+    const el = document.getElementById('introSplash');
+    if (!el) { onDone(); return; }
+
+    // Matrix rain
+    const canvas = document.getElementById('introMatrix');
+    let rafId = null;
+    let audioCtx = null;
+    if (canvas && canvas.getContext) {
+        const ctx = canvas.getContext('2d');
+        const charset = 'アイウエオカキクケコサシスセソタチツテトナニヌネノ0123456789ABCDEF<>#$%*';
+        let cols = 0, drops = [];
+        const resize = () => {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+            cols = Math.floor(canvas.width / 16);
+            drops = new Array(cols).fill(0).map(() => Math.random() * -50);
+        };
+        resize();
+        window.addEventListener('resize', resize);
+
+        const draw = () => {
+            ctx.fillStyle = 'rgba(15, 17, 23, 0.20)';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+            ctx.font = '14px "JetBrains Mono", monospace';
+            for (let i = 0; i < cols; i++) {
+                const ch = charset[Math.floor(Math.random() * charset.length)];
+                const x = i * 16;
+                const y = drops[i] * 16;
+                ctx.fillStyle = y < 40 ? '#e8eaf0' : 'rgba(104, 130, 247, 0.75)';
+                ctx.fillText(ch, x, y);
+                if (y > canvas.height && Math.random() > 0.975) drops[i] = 0;
+                drops[i] += 1;
+            }
+            rafId = requestAnimationFrame(draw);
+        };
+        draw();
+    }
+
+    // Reveal boot-log lines on their declared delays
+    document.querySelectorAll('#introBoot .boot-line').forEach(ln => {
+        const d = parseInt(ln.dataset.delay || '0', 10);
+        ln.style.animationDelay = d + 'ms';
+    });
+
+    // Soft digital "boot" sound via WebAudio (no external file needed)
+    try {
+        const AC = window.AudioContext || window.webkitAudioContext;
+        if (AC) {
+            audioCtx = new AC();
+            const playBeep = (freq, when, dur = 0.12, vol = 0.06) => {
+                const o = audioCtx.createOscillator();
+                const g = audioCtx.createGain();
+                o.type = 'sine';
+                o.frequency.setValueAtTime(freq, audioCtx.currentTime + when);
+                g.gain.setValueAtTime(0, audioCtx.currentTime + when);
+                g.gain.linearRampToValueAtTime(vol, audioCtx.currentTime + when + 0.01);
+                g.gain.exponentialRampToValueAtTime(0.0001, audioCtx.currentTime + when + dur);
+                o.connect(g).connect(audioCtx.destination);
+                o.start(audioCtx.currentTime + when);
+                o.stop(audioCtx.currentTime + when + dur + 0.02);
+            };
+            // Browsers suspend until user gesture; this is best-effort only.
+            if (audioCtx.state === 'running') {
+                playBeep(440, 0.05);
+                playBeep(660, 0.25);
+                playBeep(880, 0.55, 0.18, 0.05);
+                playBeep(1320, 2.6, 0.25, 0.05);
+            }
+        }
+    } catch (_) { /* silent */ }
+
+    // Subtle mouse parallax
+    const content = document.getElementById('introContent');
+    const onMove = (e) => {
+        const x = (e.clientX / window.innerWidth  - 0.5) * 10;
+        const y = (e.clientY / window.innerHeight - 0.5) * 10;
+        if (content) content.style.transform = `translate(${x}px, ${y}px)`;
+    };
+    window.addEventListener('mousemove', onMove);
+
+    // Allow click / key / touch to skip
+    const finish = () => {
+        el.classList.add('intro-fade-out');
+        window.removeEventListener('mousemove', onMove);
+        setTimeout(() => {
+            el.classList.add('intro-hidden');
+            if (rafId) cancelAnimationFrame(rafId);
+            if (audioCtx) { try { audioCtx.close(); } catch (_) {} }
+            onDone();
+        }, 650);
+    };
+    const skip = () => { clearTimeout(timer); finish(); };
+    el.addEventListener('click', skip, { once: true });
+    window.addEventListener('keydown', skip, { once: true });
+
+    const timer = setTimeout(finish, 3800);
+}
+
 // ── Start ──
+const INTRO_KEY = 'wwt_intro_last';
+const INTRO_TTL_MS = 60 * 60 * 1000; // 1 hour
+
+function shouldPlayIntro() {
+    const last = parseInt(localStorage.getItem(INTRO_KEY) || '0', 10);
+    return !(last && Date.now() - last < INTRO_TTL_MS);
+}
+
+function markIntroSeen() {
+    try { localStorage.setItem(INTRO_KEY, String(Date.now())); } catch (_) {}
+}
+
 document.addEventListener('DOMContentLoaded', () => {
-    if (isAuthValid()) skipSplash();
-    else initSplash();
+    if (shouldPlayIntro()) {
+        markIntroSeen();
+        runCyberIntro(revealDashboard);
+    } else {
+        const el = document.getElementById('introSplash');
+        if (el) el.remove();
+        revealDashboard();
+    }
 });
+
+
+/* ============================================================
+   Dorking module — separate DB (/api/dorks, dorking_data.db)
+   ============================================================ */
+const DORK_API = '/api/dorks';
+let dorks = [];
+let editingDorkId = null;
+
+async function loadDorks() {
+    try {
+        const r = await fetch(DORK_API, { cache: 'no-store' });
+        if (!r.ok) throw new Error('HTTP ' + r.status);
+        const data = await r.json();
+        dorks = Array.isArray(data) ? data : [];
+    } catch (e) {
+        console.error('loadDorks failed:', e);
+        dorks = [];
+    }
+    const nb = document.getElementById('navDorkCount');
+    if (nb) nb.textContent = dorks.length;
+}
+
+function saveDorks() {
+    const payload = JSON.stringify(dorks);
+    return fetch(DORK_API, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: payload
+    }).then(r => { if (!r.ok) throw new Error('HTTP ' + r.status); })
+      .catch(e => { console.error('saveDorks failed:', e); showToast('Failed to save dorks', 'error'); });
+}
+
+function searchEngineUrl(engine, q) {
+    const enc = encodeURIComponent(q);
+    switch ((engine || 'google').toLowerCase()) {
+        case 'bing':       return 'https://www.bing.com/search?q=' + enc;
+        case 'duckduckgo': return 'https://duckduckgo.com/?q=' + enc;
+        case 'yandex':     return 'https://yandex.com/search/?text=' + enc;
+        default:           return 'https://www.google.com/search?q=' + enc;
+    }
+}
+
+function runDork(query) {
+    const engine = document.getElementById('dorkEngine')?.value || 'google';
+    window.open(searchEngineUrl(engine, query), '_blank', 'noopener,noreferrer');
+}
+
+function refreshDorkCategoryUI() {
+    const cats = [...new Set(dorks.map(d => d.category || 'Uncategorized'))].sort();
+    const sel = document.getElementById('dorkCategoryFilter');
+    if (sel) {
+        const cur = sel.value;
+        sel.innerHTML = '<option value="all">All Categories</option>' +
+            cats.map(c => `<option value="${esc(c)}">${esc(c)}</option>`).join('');
+        sel.value = cats.includes(cur) || cur === 'all' ? cur : 'all';
+    }
+    const dl = document.getElementById('dorkCategoryList');
+    if (dl) dl.innerHTML = cats.map(c => `<option value="${esc(c)}"></option>`).join('');
+}
+
+function renderDorks() {
+    refreshDorkCategoryUI();
+    const container = document.getElementById('dorkGroups');
+    if (!container) return;
+    const search = (document.getElementById('dorkSearch')?.value || '').toLowerCase().trim();
+    const catFilter = document.getElementById('dorkCategoryFilter')?.value || 'all';
+
+    const filtered = dorks.filter(d => {
+        if (catFilter !== 'all' && (d.category || 'Uncategorized') !== catFilter) return false;
+        if (!search) return true;
+        const hay = `${d.title} ${d.query} ${d.description} ${d.category}`.toLowerCase();
+        return hay.includes(search);
+    });
+
+    if (!filtered.length) {
+        container.innerHTML = `<div class="dork-empty">No dorks match your filters. Click <strong>New Dork</strong> to add one.</div>`;
+        return;
+    }
+
+    const groups = {};
+    filtered.forEach(d => {
+        const k = d.category || 'Uncategorized';
+        (groups[k] = groups[k] || []).push(d);
+    });
+
+    const html = Object.keys(groups).sort().map(cat => {
+        const items = groups[cat].map(d => `
+            <button class="dork-card" data-id="${esc(d.id)}" data-action="run" type="button" title="Click to search">
+                <div class="dork-card-head">
+                    <div class="dork-card-title">${esc(d.title || '(untitled)')}</div>
+                    <span class="dork-card-edit" data-id="${esc(d.id)}" data-action="edit" title="Edit" aria-label="Edit dork" role="button">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+                    </span>
+                </div>
+                <div class="dork-card-query">${esc(d.query)}</div>
+                ${d.description ? `<div class="dork-card-desc">${esc(d.description)}</div>` : ''}
+                <div class="dork-card-foot">
+                    <span class="dork-card-tag">${esc(d.category || 'Uncategorized')}</span>
+                    <span class="dork-run-pill">
+                        Run
+                        <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M7 17L17 7M9 7h8v8"/></svg>
+                    </span>
+                </div>
+            </button>
+        `).join('');
+        return `
+            <div class="dork-group">
+                <div class="dork-group-title">
+                    <span class="dork-group-icon">${categoryIconSvg(cat)}</span>
+                    <div>
+                        <h4>${esc(cat)}</h4>
+                        <span class="dork-group-sub">${groups[cat].length} ${groups[cat].length === 1 ? 'query' : 'queries'}</span>
+                    </div>
+                    <span class="dork-group-count">${groups[cat].length}</span>
+                </div>
+                <div class="dork-grid">${items}</div>
+            </div>
+        `;
+    }).join('');
+
+    container.innerHTML = html;
+}
+
+function categoryIconSvg(cat) {
+    const c = (cat || '').toLowerCase();
+    const mk = (inner) => `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">${inner}</svg>`;
+    if (c.includes('admin') || c.includes('login'))
+        return mk('<rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0110 0v4"/>');
+    if (c.includes('directory') || c.includes('listing'))
+        return mk('<path d="M3 7a2 2 0 012-2h4l2 2h8a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2z"/>');
+    if (c.includes('exposed') || c.includes('file'))
+        return mk('<path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><path d="M14 2v6h6"/>');
+    if (c.includes('error') || c.includes('debug'))
+        return mk('<circle cx="12" cy="12" r="10"/><path d="M12 8v4M12 16h.01"/>');
+    if (c.includes('wordpress') || c.includes('joomla') || c.includes('drupal') || c.includes('cms'))
+        return mk('<rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M9 21V9"/>');
+    if (c.includes('server') || c.includes('service'))
+        return mk('<rect x="2" y="4" width="20" height="6" rx="1"/><rect x="2" y="14" width="20" height="6" rx="1"/><path d="M6 7h.01M6 17h.01"/>');
+    if (c.includes('vulnerab'))
+        return mk('<path d="M12 2l9 4v6c0 5-4 9-9 10-5-1-9-5-9-10V6z"/><path d="M9 12l2 2 4-4"/>');
+    if (c.includes('seo') || c.includes('spam'))
+        return mk('<path d="M3 3l18 18"/><path d="M10.5 6.5A6 6 0 0118 12m-2.1 4.2A6 6 0 016 12a6 6 0 012-4.5"/>');
+    return mk('<circle cx="11" cy="11" r="7"/><path d="M21 21l-4.35-4.35"/>');
+}
+
+function openDorkModal(id) {
+    editingDorkId = id || null;
+    const title = document.getElementById('dorkModalTitle');
+    const delBtn = document.getElementById('dorkDeleteBtn');
+    if (id) {
+        const d = dorks.find(x => x.id === id);
+        if (!d) return;
+        title.lastChild.nodeValue = 'Edit Dork';
+        document.getElementById('dorkTitle').value = d.title || '';
+        document.getElementById('dorkCategory').value = d.category || '';
+        document.getElementById('dorkQuery').value = d.query || '';
+        document.getElementById('dorkDescription').value = d.description || '';
+        delBtn.style.display = '';
+    } else {
+        title.lastChild.nodeValue = 'New Dork';
+        document.getElementById('dorkTitle').value = '';
+        document.getElementById('dorkCategory').value = '';
+        document.getElementById('dorkQuery').value = '';
+        document.getElementById('dorkDescription').value = '';
+        delBtn.style.display = 'none';
+    }
+    document.getElementById('dorkModal').classList.add('active');
+    setTimeout(() => document.getElementById('dorkTitle').focus(), 50);
+}
+
+function closeDorkModal() {
+    document.getElementById('dorkModal').classList.remove('active');
+    editingDorkId = null;
+}
+
+async function saveDorkFromModal() {
+    const title = document.getElementById('dorkTitle').value.trim();
+    const category = document.getElementById('dorkCategory').value.trim() || 'Uncategorized';
+    const query = document.getElementById('dorkQuery').value.trim();
+    const description = document.getElementById('dorkDescription').value.trim();
+
+    if (!title)  { showToast('Title is required', 'error'); return; }
+    if (!query)  { showToast('Query is required', 'error'); return; }
+    if (query.length > 2000) { showToast('Query too long (max 2000 chars)', 'error'); return; }
+
+    const now = new Date().toISOString();
+    if (editingDorkId) {
+        const d = dorks.find(x => x.id === editingDorkId);
+        if (d) Object.assign(d, { title, category, query, description });
+        showToast('Dork updated', 'success');
+    } else {
+        dorks.push({
+            id: 'd_' + Date.now().toString(36) + '_' + Math.random().toString(36).slice(2, 8),
+            title, category, query, description, created_at: now
+        });
+        showToast('Dork added', 'success');
+    }
+    await saveDorks();
+    closeDorkModal();
+    renderDorks();
+    const nb = document.getElementById('navDorkCount');
+    if (nb) nb.textContent = dorks.length;
+}
+
+async function deleteDorkFromModal() {
+    if (!editingDorkId) return;
+    if (!confirm('Delete this dork?')) return;
+    dorks = dorks.filter(x => x.id !== editingDorkId);
+    await saveDorks();
+    closeDorkModal();
+    renderDorks();
+    const nb = document.getElementById('navDorkCount');
+    if (nb) nb.textContent = dorks.length;
+    showToast('Dork deleted', 'info');
+}
+
+function bindDorkEvents() {
+    document.getElementById('addDorkBtn')?.addEventListener('click', () => openDorkModal(null));
+    document.getElementById('closeDorkModal')?.addEventListener('click', closeDorkModal);
+    document.getElementById('cancelDorkModal')?.addEventListener('click', closeDorkModal);
+    document.getElementById('saveDorkBtn')?.addEventListener('click', saveDorkFromModal);
+    document.getElementById('dorkDeleteBtn')?.addEventListener('click', deleteDorkFromModal);
+
+    document.getElementById('dorkSearch')?.addEventListener('input', renderDorks);
+    document.getElementById('dorkCategoryFilter')?.addEventListener('change', renderDorks);
+
+    document.getElementById('dorkModal')?.addEventListener('click', e => {
+        if (e.target.id === 'dorkModal') closeDorkModal();
+    });
+
+    document.getElementById('dorkGroups')?.addEventListener('click', e => {
+        const editBtn = e.target.closest('[data-action="edit"]');
+        if (editBtn) {
+            e.stopPropagation();
+            openDorkModal(editBtn.dataset.id);
+            return;
+        }
+        const card = e.target.closest('[data-action="run"]');
+        if (card) {
+            const d = dorks.find(x => x.id === card.dataset.id);
+            if (d) runDork(d.query);
+        }
+    });
+}
