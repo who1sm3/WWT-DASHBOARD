@@ -1,0 +1,2566 @@
+{
+  "title": "Alert Checklist",
+  "total_records": 256,
+  "records": [
+    {
+      "No": "1",
+      "Agency": "Jabatan Wilayah Persekutuan (JWP)",
+      "ID": "INC:20251230-VAP5EC",
+      "Release Date": "30/12/25",
+      "Type": "Admin Login",
+      "IoC": "https://mppwp.jwp.gov.my/admin/login",
+      "Status": "Closed",
+      "Remark": "close 31/12/2026 - semakan NC4 dah dibaikpulih"
+    },
+    {
+      "No": "2",
+      "Agency": "Majlis Perbandaran Sepang (MP Sepang)",
+      "ID": "INC:20251230-YIQ9UB",
+      "Release Date": "30/12/25",
+      "Type": "Admin Login",
+      "IoC": "https://www.mpsepang.gov.my/wp-login.php",
+      "Status": "Closed",
+      "Remark": "close 5/1/2026 - action taken"
+    },
+    {
+      "No": "3",
+      "Agency": "Yayasan Negeri Sembilan (YNS)",
+      "ID": "INC:20260102-WOQ1AN",
+      "Release Date": "2/1/26",
+      "Type": "Admin Login",
+      "IoC": "https://apc.yns.gov.my/admin/login",
+      "Status": "Closed",
+      "Remark": "close 6/1/2026 - agency maklum akses terhad kpd pengguna yang diberi kebenaran sahaja."
+    },
+    {
+      "No": "4",
+      "Agency": "Kementerian Perumahan dan Kerajaan Tempatan (KPKT)",
+      "ID": "INC:20260102-RAR0UD",
+      "Release Date": "2/1/26",
+      "Type": "Admin Login",
+      "IoC": "http://sprn-dev.kpkt.gov.my/admin/login",
+      "Status": "Closed",
+      "Remark": "close 2/1/2026"
+    },
+    {
+      "No": "5",
+      "Agency": "Kementerian Perumahan dan Kerajaan Tempatan (KPKT)",
+      "ID": "INC:20260102-KOF7EJ",
+      "Release Date": "2/1/26",
+      "Type": "Debug Bar",
+      "IoC": "http://sprn-dev.kpkt.gov.my/admin/login",
+      "Status": "Closed",
+      "Remark": "close 2/1/2027"
+    },
+    {
+      "No": "6",
+      "Agency": "Yayasan Negeri Sembilan (YNS)",
+      "ID": "INC:20260103-KUN6IH",
+      "Release Date": "3/1/26",
+      "Type": "Admin Login",
+      "IoC": "https://bsh.yns.gov.my/admin/login",
+      "Status": "Closed",
+      "Remark": "close 6/1/2026 - agency maklum akses terhad kpd pengguna yang diberi kebenaran sahaja."
+    },
+    {
+      "No": "7",
+      "Agency": "Jabatan Agama Islam Selangor (JAIS)",
+      "ID": "INC:20260105-KAK0UH",
+      "Release Date": "5/1/26",
+      "Type": "Admin Login",
+      "IoC": "https://egkafa.jais.gov.my/admin/login",
+      "Status": "Closed",
+      "Remark": "close 13/1/2026 - action taken"
+    },
+    {
+      "No": "8",
+      "Agency": "Jabatan Hal Ehwal Agama Islam Negeri Sabah (JHEAINS)",
+      "ID": "INC:20250821-ROT3UC",
+      "Release Date": "21/8/25",
+      "Type": "Admin Login",
+      "IoC": "https://emuallaf.sabah.gov.my/admin/login.php",
+      "Status": "Closed",
+      "Remark": "pernah kluarkan emel on 21/8/25"
+    },
+    {
+      "No": "9",
+      "Agency": "Kementerian Perumahan dan Kerajaan Tempatan (KPKT)",
+      "ID": "INC:20260216-YIL16F",
+      "Release Date": "16/2/26",
+      "Type": "Exposed Data",
+      "IoC": "https://portalosc.kpkt.gov.my/osc/Borang/NAMA_WAKIL_AGENSI_2021.pdf",
+      "Status": "Closed",
+      "Remark": "agensi maklum adalah dibenarkan bagi akses umum"
+    },
+    {
+      "No": "10",
+      "Agency": "Kementerian Pendidikan Malaysia (KPM)",
+      "ID": "",
+      "Release Date": "",
+      "Type": "Exposed Data",
+      "IoC": "https://lpbm.gov.my/assets/",
+      "Status": "Closed",
+      "Remark": "confirm balik \"sulit\""
+    },
+    {
+      "No": "11",
+      "Agency": "Lembaga Perancang Bandar Malaysia (LPBM)",
+      "ID": "INC:20251106-CIR0EG",
+      "Release Date": "",
+      "Type": "Index List",
+      "IoC": "",
+      "Status": "Closed",
+      "Remark": "pernah kluarkan emel on 6/11/25"
+    },
+    {
+      "No": "12",
+      "Agency": "Pertubuhan Keselamatan Sosial (PERKESO)",
+      "ID": "INC:20260126-VET6OX",
+      "Release Date": "",
+      "Type": "Index List",
+      "IoC": "https://myfuturejobs.gov.my/wp-includes/",
+      "Status": "Closed",
+      "Remark": ""
+    },
+    {
+      "No": "13",
+      "Agency": "Invest Sabah Bhd",
+      "ID": "INC:20251209-BEJ3UC",
+      "Release Date": "",
+      "Type": "Index List",
+      "IoC": "Index of /wp-content/uploads/",
+      "Status": "Closed",
+      "Remark": "pernah kluarkan emel on 9/12/25"
+    },
+    {
+      "No": "14",
+      "Agency": "Yayasan Warisan Johor (YWJ)",
+      "ID": "INC:20260120-GIT1AW",
+      "Release Date": "",
+      "Type": "Index List",
+      "IoC": "Index of /v5/wp-includes/",
+      "Status": "Closed",
+      "Remark": "26/1 - action taken"
+    },
+    {
+      "No": "15",
+      "Agency": "Jabatan Wakaf, Zakat dan Haji (JAWHAR)",
+      "ID": "INC:20260106-CUC1EQ",
+      "Release Date": "6/1/26",
+      "Type": "Index List",
+      "IoC": "Index of /wp-content/plugins/visitors-traffic-real-time-statistics",
+      "Status": "Closed",
+      "Remark": ""
+    },
+    {
+      "No": "16",
+      "Agency": "ADTEC JTM Kampus Pasir Gudang & Kampus Senai",
+      "ID": "INC:20260109-SAX8EY",
+      "Release Date": "9/1/26",
+      "Type": "Index List",
+      "IoC": "Index of /v3/wp-includes",
+      "Status": "Closed",
+      "Remark": ""
+    },
+    {
+      "No": "17",
+      "Agency": "ADTEC JTM Kampus Ipoh",
+      "ID": "INC:20260108-SIF2EM",
+      "Release Date": "8/1/26",
+      "Type": "Index List",
+      "IoC": "Index of /wp-includes",
+      "Status": "CTM",
+      "Remark": "close 19/1/2026 - aging response"
+    },
+    {
+      "No": "18",
+      "Agency": "Pejabat Tun Abdullah Ahmad Badawi",
+      "ID": "",
+      "Release Date": "",
+      "Type": "Index List",
+      "IoC": "Index of /wp-includes",
+      "Status": "Waiting",
+      "Remark": ""
+    },
+    {
+      "No": "19",
+      "Agency": "ADTEC JTM Kampus Jitra",
+      "ID": "",
+      "Release Date": "",
+      "Type": "Debug Bar",
+      "IoC": "ilpjitra.gov.my/wp-content/themes/Divi/includes/builder/module/helpers/Alignment.php",
+      "Status": "Closed",
+      "Remark": "4/3/2026 - Error 404 link cannot be access"
+    },
+    {
+      "No": "20",
+      "Agency": "Majlis Bandaraya Melaka Bersejarah (MBMB)",
+      "ID": "",
+      "Release Date": "",
+      "Type": "Debug Bar",
+      "IoC": "Error Occurred While Processing Request",
+      "Status": "Closed",
+      "Remark": "website cant access anymore - 19/1"
+    },
+    {
+      "No": "21",
+      "Agency": "Kementerian Dalam Negeri (KDN)",
+      "ID": "",
+      "Release Date": "",
+      "Type": "Vulnerability",
+      "IoC": "Modul Pemeriksaan Aset",
+      "Status": "Waiting",
+      "Remark": "patutnya kena login untuk access webpage ini."
+    },
+    {
+      "No": "22",
+      "Agency": "Jabatan Pertanian Malaysia (DOA)",
+      "ID": "INC:20260107-VUG7OS",
+      "Release Date": "7/1/26",
+      "Type": "PHP Error",
+      "IoC": "ebooking.doa.gov.my/kemas_aduantry.php",
+      "Status": "Closed",
+      "Remark": "7/1 - Action taken"
+    },
+    {
+      "No": "23",
+      "Agency": "Perbadanan Putrajaya (PPj)",
+      "ID": "",
+      "Release Date": "",
+      "Type": "Debug Bar",
+      "IoC": "https://ppk.ppj.gov.my/home-1",
+      "Status": "Waiting",
+      "Remark": ""
+    },
+    {
+      "No": "24",
+      "Agency": "Suruhanjaya Perkhidmatan Awam Malaysia (SPA)",
+      "ID": "INC:20260121-NIR4UN",
+      "Release Date": "21/1/26",
+      "Type": "Debug Bar",
+      "IoC": "Sistem ePengisian",
+      "Status": "Closed",
+      "Remark": ""
+    },
+    {
+      "No": "25",
+      "Agency": "Kerajaan Negeri Johor",
+      "ID": "",
+      "Release Date": "",
+      "Type": "Exposed Git Repo",
+      "IoC": "Files · main · MOHD AMINURAHIM MOHD BASRI / Akaunting · GitLab",
+      "Status": "Waiting",
+      "Remark": "exposed github repo"
+    },
+    {
+      "No": "26",
+      "Agency": "Kementerian Kemajuan Desa Dan Wilayah (KKDW)",
+      "ID": "",
+      "Release Date": "",
+      "Type": "PHP Error",
+      "IoC": "tms.saga.keda.gov.my/dataTables/exec.php?oid=guestscreen&action=3",
+      "Status": "Waiting",
+      "Remark": "able to see debug error, only privileged access can access the content of the page"
+    },
+    {
+      "No": "27",
+      "Agency": "Lembaga Kemajuan Pertanian Muda (MADA)",
+      "ID": "",
+      "Release Date": "",
+      "Type": "Debug Bar",
+      "IoC": "emm.mada.gov.my/mada/app/Http/Middleware/VerifyCsrfToken.php",
+      "Status": "Waiting",
+      "Remark": ""
+    },
+    {
+      "No": "28",
+      "Agency": "Bahagian Pengurusan Maklumat (MOH)",
+      "ID": "",
+      "Release Date": "",
+      "Type": "Vulnerability",
+      "IoC": "Files · main · MOHAMMAD AMIR ASHRAAF AMRAN / censsis · GitLab",
+      "Status": "Waiting",
+      "Remark": "code app censis exposed without login credentials"
+    },
+    {
+      "No": "29",
+      "Agency": "Majlis Bandaraya Kuantan (MBK)",
+      "ID": "",
+      "Release Date": "",
+      "Type": "Debug Bar",
+      "IoC": "Profil UD(ii) Papan Iklan/Minipole",
+      "Status": "Closed",
+      "Remark": "macam dah tak affected - 6/1"
+    },
+    {
+      "No": "30",
+      "Agency": "Jabatan Tenaga Manusia (JTM)",
+      "ID": "INC:20251231-TET0EQ",
+      "Release Date": "31/12/25",
+      "Type": "Admin Login",
+      "IoC": "https://apps.jtm.gov.my/KeLI/e-admin.php",
+      "Status": "Closed",
+      "Remark": "close 5/1/2026 - agensi maklum terdapat keperluan untuk diakses oleh capaian awam"
+    },
+    {
+      "No": "31",
+      "Agency": "Majlis Pergigian Malaysia (MDC)",
+      "ID": "INC:31122025-QOK9OQ",
+      "Release Date": "31/12/25",
+      "Type": "Admin Login",
+      "IoC": "https://hq.moh.gov.my/ohp/mdc/administrator/index.php?option=com_docman&view=document&id=8",
+      "Status": "Closed",
+      "Remark": "9/1/2026 - Action taken"
+    },
+    {
+      "No": "32",
+      "Agency": "Majlis Daerah Kerian (MD Kerian)",
+      "ID": "INC:31122025-LOQ0EC",
+      "Release Date": "31/12/25",
+      "Type": "Apache Tomcat",
+      "IoC": "https://epbt.mdkerian.gov.my/docs/setup.html",
+      "Status": "Closed",
+      "Remark": "7/1/2026 - action taken"
+    },
+    {
+      "No": "33",
+      "Agency": "ADTEC JTM Kampus Jitra",
+      "ID": "",
+      "Release Date": "",
+      "Type": "PHP Error",
+      "IoC": "https://www.ilpjitra.gov.my/wp-content/themes/Divi/includes/builder/module/helpers/motion/Scale.php",
+      "Status": "Closed",
+      "Remark": ""
+    },
+    {
+      "No": "34",
+      "Agency": "ADTEC JTM Kampus Pasir Gudang & Kampus Senai",
+      "ID": "INC:20260212-KEL5OS",
+      "Release Date": "12/2/26",
+      "Type": "Index List",
+      "IoC": "https://www.ilppg.gov.my/v3/wp-content/themes/Divi/includes/",
+      "Status": "Closed",
+      "Remark": "4/3/2026 - Error 404 link cannot be access"
+    },
+    {
+      "No": "35",
+      "Agency": "Majlis Amanah Rakyat Malaysia (MARA)",
+      "ID": "INC:20260114-VAC2OR",
+      "Release Date": "14/1/26",
+      "Type": "IDOR",
+      "IoC": "https://mypremis.mara.gov.my/portal/form_applyview.php?icno=911003065211&email=basyarun@gmail.com",
+      "Status": "Closed",
+      "Remark": "aging response - 3/2"
+    },
+    {
+      "No": "36",
+      "Agency": "Amanah Ikhtiar Malaysia (AIM)",
+      "ID": "",
+      "Release Date": "",
+      "Type": "Vulnerability",
+      "IoC": "https://safis-selatan.aim.gov.my/ https://safis-selatan.aim.gov.my/jmx-console/HtmlAdaptor?action=inspectMBean&name=java.lang%3Atype%3DRuntime",
+      "Status": "Waiting",
+      "Remark": "Exposed JBOSS Application Server"
+    },
+    {
+      "No": "37",
+      "Agency": "Lembaga Kemajuan Johor Tenggara (KEJORA)",
+      "ID": "INC:20260102-TIN1OS",
+      "Release Date": "2/1/2026",
+      "Type": "Admin Login",
+      "IoC": "https://edura.kejora.gov.my/edura/edura/sign-in-admin.php",
+      "Status": "Closed",
+      "Remark": "close 5/1/2026 - agensi maklum terdapat keperluan untuk diakses oleh capaian awam"
+    },
+    {
+      "No": "38",
+      "Agency": "Bahagian Kabinet, Perlembagaan dan Perhubungan Antara Kerajaan",
+      "ID": "INC:20260122-WOH8IV",
+      "Release Date": "22/1/26",
+      "Type": "Admin Login",
+      "IoC": "https://www.kabinet.gov.my/wp-login.php",
+      "Status": "Closed",
+      "Remark": "22/1 - Action taken"
+    },
+    {
+      "No": "39",
+      "Agency": "Lembaga Kemajuan Ikan Malaysia (LKIM)",
+      "ID": "INC:20260107-DOR1EZ",
+      "Release Date": "7/1/26",
+      "Type": "Admin Login",
+      "IoC": "https://www.lkim.gov.my/wp-login.php",
+      "Status": "CTM",
+      "Remark": "close 19/1/2026 - aging response"
+    },
+    {
+      "No": "40",
+      "Agency": "Kerajaan Negeri Selangor",
+      "ID": "INC:20260105-KIZ3OM",
+      "Release Date": "5/1/26",
+      "Type": "Admin Login",
+      "IoC": "https://ssipr-daftar.selangor.gov.my/admin/login",
+      "Status": "Closed",
+      "Remark": "exposed on sistem smart insiatif peduli rakyat close 6/1/2026 - Agensi maklum sistem ini tidak lagi digunakan oleh orang awam berkuat kuasa mulai 26 Januari 2026."
+    },
+    {
+      "No": "41",
+      "Agency": "Institut Latihan Perindustrian Pasir Gudang (ILPPG)",
+      "ID": "",
+      "Release Date": "",
+      "Type": "PHP Error",
+      "IoC": "1. https://www.ilppg.gov.my/v3/wp-content/plugins/interactive-3d-flipbook-powered-physics-engine/assets/templates/single-3d-flip-book.php 2. https://www.ilppg.gov.my/v3/wp-includes/class-wp-image-editor-gd.php 3. https://www.ilppg.gov.my/v3/wp-content/themes/Divi/includes/builder/module/CountdownTimer.php",
+      "Status": "Closed",
+      "Remark": "4/3/2026 - Error 500 on all 3 links cannot be accessed."
+    },
+    {
+      "No": "42",
+      "Agency": "ADTEC JTM Kampus Serian",
+      "ID": "",
+      "Release Date": "",
+      "Type": "PHP Error",
+      "IoC": "1. https://www.adtecserian.gov.my/wp-includes/SimplePie/src/Cache/Redis.php 2. https://www.adtecserian.gov.my/wp-includes/widgets/class-wp-widget-tag-cloud.php",
+      "Status": "Closed",
+      "Remark": "15/4 - xleh akses dah"
+    },
+    {
+      "No": "43",
+      "Agency": "Institut Latihan Perindustrian Marang (ILPMRG)",
+      "ID": "INC:20260311-KUJ5OP",
+      "Release Date": "11/3/2026",
+      "Type": "PHP Error",
+      "IoC": "https://www.ilpmrg.gov.my/ilpmrg/wp-content/plugins/interactive-3d-flipbook-powered-physics-engine/",
+      "Status": "Closed",
+      "Remark": ""
+    },
+    {
+      "No": "44",
+      "Agency": "Perbadanan Pembangunan Kampong Bharu (PKB)",
+      "ID": "INC:20260106-WEM0AQ",
+      "Release Date": "6/1/26",
+      "Type": "Index List",
+      "IoC": "https://www.pkb.gov.my/wp-includes/ https://www.pkb.gov.my/wp-content/plugins/use-your-drive/",
+      "Status": "Closed",
+      "Remark": "8/1/26 - Action taken"
+    },
+    {
+      "No": "45",
+      "Agency": "Majlis Perubatan Malaysia (Malaysian Medical Council (MMC)",
+      "ID": "",
+      "Release Date": "",
+      "Type": "Admin Login",
+      "IoC": "https://mmc.gov.my/wp-login.php",
+      "Status": "Closed",
+      "Remark": "4/3/2026 - Error 404 page not found"
+    },
+    {
+      "No": "46",
+      "Agency": "Pejabat Tanah dan Jajahan Jeli",
+      "ID": "INC:20260119-QIM1UW",
+      "Release Date": "19/1/2026",
+      "Type": "Admin Login",
+      "IoC": "https://ptjj.kelantan.gov.my/administrator/",
+      "Status": "Closed",
+      "Remark": ""
+    },
+    {
+      "No": "47",
+      "Agency": "Jabatan Pertanian Negeri Pahang",
+      "ID": "INC:20260114-HIS8UN",
+      "Release Date": "14/1/2026",
+      "Type": "Admin Login",
+      "IoC": "https://agri.pahang.gov.my/administrator/",
+      "Status": "Closed",
+      "Remark": "28/1 - action taken"
+    },
+    {
+      "No": "48",
+      "Agency": "Jabatan Penjara Malaysia",
+      "ID": "INC:20260107-XIG1OG",
+      "Release Date": "7/1/2026",
+      "Type": "Admin Login",
+      "IoC": "https://direktori.prison.gov.my/administrator/",
+      "Status": "Closed",
+      "Remark": "8/1/26 - action taken"
+    },
+    {
+      "No": "49",
+      "Agency": "Perbadanan Harta Intelek Malaysia (MyIPO)",
+      "ID": "INC:20260116-WAS4OB",
+      "Release Date": "16/1/26",
+      "Type": "Admin Login",
+      "IoC": "https://www.myipo.gov.my/wp-login.php?redirect_to=https%3A%2F%2Fwww.myipo.gov.my%2Fwp-admin%2F&reauth=1",
+      "Status": "Closed",
+      "Remark": ""
+    },
+    {
+      "No": "50",
+      "Agency": "Dewan Bandaraya Kuala Lumpur (DBKL)",
+      "ID": "INC:20260121-YUD3EN",
+      "Release Date": "21/1/26",
+      "Type": "Admin Login",
+      "IoC": "https://ppkl.dbkl.gov.my/wp-login.php?redirect_to=https%3A%2F%2Fppkl.dbkl.gov.my%2Fwp-admin%2F&reauth=1",
+      "Status": "Closed",
+      "Remark": "Laman web dah pulih. 26/1/26"
+    },
+    {
+      "No": "51",
+      "Agency": "Jabatan Wakaf, Zakat & Haji (JAWHAR)",
+      "ID": "INC:20260116-VUT3IV",
+      "Release Date": "16/1/26",
+      "Type": "Admin Login",
+      "IoC": "https://e-penerbitan.jawhar.gov.my/wp-login.php?redirect_to=https%3A%2F%2Fe-penerbitan.jawhar.gov.my%2Fwp-admin%2F&reauth=1",
+      "Status": "Closed",
+      "Remark": ""
+    },
+    {
+      "No": "52",
+      "Agency": "Lembaga Industri Getah Sabah (LIGS)",
+      "ID": "INC:20250818-GIX1OD",
+      "Release Date": "",
+      "Type": "WinDev/WebDev Error",
+      "IoC": "http://apps.ligs.gov.my/LIGS_WEB_30_WEB/UK/index.awp?A84",
+      "Status": "Closed",
+      "Remark": "kes ni dah pernah hantar on 18 Aug 2025,"
+    },
+    {
+      "No": "53",
+      "Agency": "Kerajaan Negeri Selangor",
+      "ID": "",
+      "Release Date": "",
+      "Type": "PHP Error",
+      "IoC": "https://etempahan.selangor.gov.my/TCPDF/doc/elementindex.html",
+      "Status": "Waiting",
+      "Remark": ""
+    },
+    {
+      "No": "54",
+      "Agency": "ADTEC JTM Kampus Serian",
+      "ID": "INC:20260129-NOH0OD",
+      "Release Date": "29/1/2026",
+      "Type": "PHP Error",
+      "IoC": "https://www.adtecserian.gov.my/wp-content/themes/Divi/includes/builder/module/settings/migration/ShopOrderByDefault.php",
+      "Status": "Closed",
+      "Remark": "29/1 - action taken"
+    },
+    {
+      "No": "55",
+      "Agency": "Majlis Bandaraya Petaling Jaya (MBPJ)",
+      "ID": "INC:20260113-HAT7UT",
+      "Release Date": "13/1/2026",
+      "Type": "Admin Login",
+      "IoC": "https://helpdesk.mbpj.gov.my/admin/login",
+      "Status": "Closed",
+      "Remark": ""
+    },
+    {
+      "No": "56",
+      "Agency": "Jabatan Pengairan dan Saliran (JPS)",
+      "ID": "INC:20260113-ZIV5IX",
+      "Release Date": "13/1/2026",
+      "Type": "Admin Login",
+      "IoC": "http://hrd.water.gov.my/jps/admin/Login.asp",
+      "Status": "Closed",
+      "Remark": ""
+    },
+    {
+      "No": "57",
+      "Agency": "Jabatan Pengairan dan Saliran (JPS) Johor",
+      "ID": "INC:20260112-WUT6EL",
+      "Release Date": "12/1/2026",
+      "Type": "Admin Login",
+      "IoC": "https://jps.johor.gov.my/wp-login.php?redirect_to=https%3A%2F%2Fjps.johor.gov.my%2Fwp-admin%2F&reauth=1",
+      "Status": "Closed",
+      "Remark": ""
+    },
+    {
+      "No": "58",
+      "Agency": "Kementerian Pelancongan, Seni dan Budaya (MOTAC)",
+      "ID": "INC:20260112-NOW6UG",
+      "Release Date": "12/1/2026",
+      "Type": "Admin Login",
+      "IoC": "https://www.motac.gov.my/wp-admin/",
+      "Status": "Closed",
+      "Remark": ""
+    },
+    {
+      "No": "59",
+      "Agency": "Kumpulan Wang Persaraan (KWAP)",
+      "ID": "",
+      "Release Date": "",
+      "Type": "Index List",
+      "IoC": "Index of /wp-includes",
+      "Status": "Closed",
+      "Remark": "15/1 - looks like agency taken action already"
+    },
+    {
+      "No": "60",
+      "Agency": "Jabatan Penerangan Malaysia (JAPEN)",
+      "ID": "INC:20260115-REH6AF",
+      "Release Date": "15/1/2026",
+      "Type": "Index List",
+      "IoC": "https://www.penerangan.gov.my/wp-includes/",
+      "Status": "Closed",
+      "Remark": ""
+    },
+    {
+      "No": "61",
+      "Agency": "Suruhanjaya Pencegahan Rasuah Malaysia (SPRM)",
+      "ID": "INC:20260115-KAX5AC",
+      "Release Date": "15/1/2026",
+      "Type": "Admin Login",
+      "IoC": "https://sso.sprm.gov.my/admin/index.php?route=common/login",
+      "Status": "Closed",
+      "Remark": ""
+    },
+    {
+      "No": "62",
+      "Agency": "Jabatan Pengairan dan Saliran Malaysia",
+      "ID": "INC:20250528-NAH4OV",
+      "Release Date": "",
+      "Type": "Admin Login",
+      "IoC": "http://sprhin.water.gov.my/bin/sprhin-admin/login.cfm",
+      "Status": "Closed",
+      "Remark": "kes ni dah pernah hantar on 28 may 2025, affected balik"
+    },
+    {
+      "No": "63",
+      "Agency": "Yayasan Pelajaran Johor (YPJ)",
+      "ID": "INC:20260122-DIS4UX",
+      "Release Date": "22/1/26",
+      "Type": "Admin Login",
+      "IoC": "https://portal.ypj.gov.my/wp-login.php?redirect_to=https%3A%2F%2Fportal.ypj.gov.my%2Fwp-admin%2Fupdate-core.php&reauth=1",
+      "Status": "Closed",
+      "Remark": "closed due to aging - 3/2"
+    },
+    {
+      "No": "64",
+      "Agency": "Perbadanan Melaka (MCORP)",
+      "ID": "INC:20260120-MUQ8OG",
+      "Release Date": "20/1/2026",
+      "Type": "Admin Login",
+      "IoC": "https://mcorp.gov.my/wp-login.php?redirect_to=https%3A%2F%2Fmcorp.gov.my%2Fwp-admin%2F&reauth=1",
+      "Status": "Closed",
+      "Remark": "21/1 - looks like agency dah take action"
+    },
+    {
+      "No": "65",
+      "Agency": "Yayasan Pembangunan Keluarga Darul Ta'zim (YPKDT)",
+      "ID": "",
+      "Release Date": "",
+      "Type": "Admin Login",
+      "IoC": "https://ypkdt.gov.my/wp-login.php?redirect_to=https%3A%2F%2Fypkdt.gov.my%2Fwp-admin%2F&reauth=1",
+      "Status": "Waiting",
+      "Remark": ""
+    },
+    {
+      "No": "66",
+      "Agency": "Jabatan Hal Ehwal Kesatuan Sekerja",
+      "ID": "INC:20260119-HIH8UB",
+      "Release Date": "19/1/2026",
+      "Type": "Admin Login",
+      "IoC": "https://jheks.mohr.gov.my/wp-login.php",
+      "Status": "Closed",
+      "Remark": ""
+    },
+    {
+      "No": "67",
+      "Agency": "Pejabat Setiausaha Kerajaan (SUK) Negeri Johor",
+      "ID": "INC:20260120-BUL3OH",
+      "Release Date": "20/1/2026",
+      "Type": "Admin Login",
+      "IoC": "https://www.johor.gov.my/wp-login.php",
+      "Status": "Closed",
+      "Remark": ""
+    },
+    {
+      "No": "68",
+      "Agency": "Majlis Daerah Rembau",
+      "ID": "INC:20260313-RAT2UP",
+      "Release Date": "13/3/2026",
+      "Type": "Admin Login",
+      "IoC": "https://www.flow.mdr.gov.my/admin/login",
+      "Status": "Closed",
+      "Remark": ""
+    },
+    {
+      "No": "69",
+      "Agency": "Kerajaan Negeri Sabah",
+      "ID": "INC:20260312-JUY3OR",
+      "Release Date": "",
+      "Type": "Admin Login",
+      "IoC": "https://i-adu1.sabah.gov.my/aduan-uins/admin",
+      "Status": "Closed",
+      "Remark": "terdapat keperluan untuk membenarkan akses terhadap Sistem aplikasi ini kepada rangkaian awam."
+    },
+    {
+      "No": "70",
+      "Agency": "Lembaga Arkitek Malaysia (LAM)",
+      "ID": "INC:20260126-RUT0OH",
+      "Release Date": "26/1/2026",
+      "Type": "Admin Login",
+      "IoC": "https://admin.lam.gov.my/",
+      "Status": "Closed",
+      "Remark": "aging, no reposnd - 9/2"
+    },
+    {
+      "No": "71",
+      "Agency": "Institut Penyelidikan Pembangunan Belia Malaysia (IYRES)",
+      "ID": "",
+      "Release Date": "",
+      "Type": "Admin Login",
+      "IoC": "https://ydata.iyres.gov.my/admin/index.php?r=site/login",
+      "Status": "Waiting",
+      "Remark": "Tak pasti , kena konfirm balik dgn pro"
+    },
+    {
+      "No": "72",
+      "Agency": "Jabatan Pendakwaan Syariah Selangor (JPSS)",
+      "ID": "INC:20260306-FES9US",
+      "Release Date": "6/3/2026",
+      "Type": "Index List",
+      "IoC": "https://jpss.gov.my/wp-content/plugins/essential-addons-for-elementor-lite/assets/front-end/img/image-masking/",
+      "Status": "Closed",
+      "Remark": ""
+    },
+    {
+      "No": "73",
+      "Agency": "Kementerian Sumber Manusia",
+      "ID": "INC:20260126-VET6OX",
+      "Release Date": "26/1/2026",
+      "Type": "Index List",
+      "IoC": "1. https://myfuturejobs.gov.my/wp-includes/Requests/ 2. https://myfuturejobs.gov.my/wp-includes/css/dist/ 3. https://myfuturejobs.gov.my/wp-includes/SimplePie/src/ 4. https://myfuturejobs.gov.my/wp-includes/sodium_compat/src/",
+      "Status": "Closed",
+      "Remark": "myfuturejob Kita dah send email ke perkeso and dah x affected"
+    },
+    {
+      "No": "74",
+      "Agency": "Kerajaan Negeri Sabah",
+      "ID": "INC:20260220-MIW6OZ",
+      "Release Date": "20/2/26",
+      "Type": "Admin Login",
+      "IoC": "https://sabah.gov.my/ms/user/login",
+      "Status": "Closed",
+      "Remark": ""
+    },
+    {
+      "No": "75",
+      "Agency": "Pusat Latihan Teknologi Tinggi (ADTEC) Shah Alam",
+      "ID": "INC:20260122-FUQ1UT",
+      "Release Date": "22/1/26",
+      "Type": "Vulnerability",
+      "IoC": "https://apps.jtm.gov.my/eTOS/e-admin.php?userid=&pass=&filteruploadby=Zarina+bte+Ibrahim%40ADTEC+SHAH+ALAM&id=251&stamp=2015-07-28+09%3A04%3A14&sesisemasa=1%2F2025&a=2",
+      "Status": "Closed",
+      "Remark": "BAC"
+    },
+    {
+      "No": "76",
+      "Agency": "Jabatan Pembangunan Wanita (JPW)",
+      "ID": "INC:20260123-RUZ8UF",
+      "Release Date": "23/1/26",
+      "Type": "Admin Login",
+      "IoC": "https://www.jpw.gov.my/administrator/",
+      "Status": "Closed",
+      "Remark": "action taken - 3/2"
+    },
+    {
+      "No": "77",
+      "Agency": "Pusat Sains Negara (PSN)",
+      "ID": "INC:20260123-GUX7ER",
+      "Release Date": "23/1/26",
+      "Type": "Admin Login",
+      "IoC": "https://psn.gov.my/wp-login.php",
+      "Status": "Closed",
+      "Remark": ""
+    },
+    {
+      "No": "78",
+      "Agency": "Agensi Anti Dadah Kebangsaan (AADK)",
+      "ID": "",
+      "Release Date": "",
+      "Type": "Admin Login",
+      "IoC": "https://jurnal.aadk.gov.my/wp-login.php",
+      "Status": "Closed",
+      "Remark": "no longer access - 12/3"
+    },
+    {
+      "No": "79",
+      "Agency": "Jabatan Perikanan Malaysia (DOF)",
+      "ID": "INC:20260129-MUF3UY",
+      "Release Date": "29/1/2026",
+      "Type": "Admin Login",
+      "IoC": "https://fri.dof.gov.my/wp-login.php",
+      "Status": "Closed",
+      "Remark": "tak pasti btul ka tak agensi tu"
+    },
+    {
+      "No": "80",
+      "Agency": "Jabatan Perdana Menteri (JPM)",
+      "ID": "",
+      "Release Date": "",
+      "Type": "Admin Login",
+      "IoC": "https://mbj.jpm.gov.my/administrator/",
+      "Status": "Waiting",
+      "Remark": "tak pasti btul ka tak agensi tu"
+    },
+    {
+      "No": "81",
+      "Agency": "Agensi Kawalan dan Perlindungan Sempadan Malaysia (AKPS)",
+      "ID": "INC:20260401-ZID7UF",
+      "Release Date": "1/4/2026",
+      "Type": "Admin Login",
+      "IoC": "https://mcba.moha.gov.my/administrator/",
+      "Status": "Closed",
+      "Remark": ""
+    },
+    {
+      "No": "82",
+      "Agency": "Ministry of Tourism, Culture and Environment (KePKAS)",
+      "ID": "",
+      "Release Date": "",
+      "Type": "Vulnerability",
+      "IoC": "https://epd.sabah.gov.my/.env",
+      "Status": "Waiting",
+      "Remark": "tak pasti btul ka tak agensi tu"
+    },
+    {
+      "No": "83",
+      "Agency": "Lembaga Tabung Angkatan Tentera (LTAT)",
+      "ID": "",
+      "Release Date": "",
+      "Type": "Vulnerability",
+      "IoC": "https://www.ltat.gov.my/laravel/.env",
+      "Status": "Waiting",
+      "Remark": ""
+    },
+    {
+      "No": "84",
+      "Agency": "ILP Pasir Gudang",
+      "ID": "",
+      "Release Date": "",
+      "Type": "Index List",
+      "IoC": "https://www.ilppg.gov.my/v3/wp-includes/sodium_compat/src/",
+      "Status": "Closed",
+      "Remark": "no longer access - 12/3"
+    },
+    {
+      "No": "85",
+      "Agency": "Pertubuhan Keselamatan Sosial (PERKESO)",
+      "ID": "INC:20260126-VET6OX",
+      "Release Date": "26/1/2026",
+      "Type": "Index List",
+      "IoC": "https://myfuturejobs.gov.my/wp-includes/js/dist/script-modules/block-library/file/",
+      "Status": "Closed",
+      "Remark": ""
+    },
+    {
+      "No": "86",
+      "Agency": "Majlis Daerah Kuala Pilah (MDKP)",
+      "ID": "INC:20260126-YAT3IM",
+      "Release Date": "26/1/2026",
+      "Type": "Index List",
+      "IoC": "https://mdkp.gov.my/wp-content/plugins/wp-file-download/",
+      "Status": "Closed",
+      "Remark": "aging, no respond - 9/2"
+    },
+    {
+      "No": "87",
+      "Agency": "Jabatan Perkhidmatan Veterinar (DVS)",
+      "ID": "INC:20260128-VID9OL",
+      "Release Date": "28/1/2026",
+      "Type": "Index List",
+      "IoC": "https://research.dvs.gov.my/ral/wp-includes/l10n/",
+      "Status": "Closed",
+      "Remark": ""
+    },
+    {
+      "No": "88",
+      "Agency": "ADTEC JTM Kampus Kepala Batas (ILPKBPP)",
+      "ID": "INC:20260127-VAL1IL",
+      "Release Date": "27/1/2026",
+      "Type": "Admin Login",
+      "IoC": "http://apps.ilpkbpp.gov.my/spso/admin/index.php",
+      "Status": "Closed",
+      "Remark": ""
+    },
+    {
+      "No": "89",
+      "Agency": "Jabatan Wakaf, Zakat dan Haji (JAWHAR)",
+      "ID": "INC:20260106-CUC1EQ",
+      "Release Date": "61/1/26",
+      "Type": "PHP Error",
+      "IoC": "https://www.jawhar.gov.my/wp-content/plugins/visitors-traffic-real-time-statistics/Visitors-Traffic-Real-Time-Statistics.php",
+      "Status": "Closed",
+      "Remark": "dibaik pulih 28/1"
+    },
+    {
+      "No": "90",
+      "Agency": "Jabatan Perancangan Bandar dan Desa Negeri Melaka (PLANMalaysia Melaka)",
+      "ID": "INC:20260128-TAS9AX",
+      "Release Date": "28/1/2026",
+      "Type": "Vulnerability",
+      "IoC": "https://planmalaysiamelaka.gov.my/dasar-privasi-dan-keselamatan",
+      "Status": "Closed",
+      "Remark": "closed 10/2 - aging"
+    },
+    {
+      "No": "91",
+      "Agency": "Kementerian Pendidikan Malaysia (KPM)",
+      "ID": "INC:20260130-XIV8EJ",
+      "Release Date": "30/1/2026",
+      "Type": "Admin Login",
+      "IoC": "https://bpltv.moe.gov.my/wp-login.php",
+      "Status": "Closed",
+      "Remark": "action taken - 4/2"
+    },
+    {
+      "No": "92",
+      "Agency": "Unit Peneraju Agenda Bumiputera (TERAJU)",
+      "ID": "",
+      "Release Date": "",
+      "Type": "Admin Login",
+      "IoC": "https://teraju.gov.my/wp-login.php?redirect_to=https%3A%2F%2Fteraju.gov.my%2Fwp-admin%2F&reauth=1",
+      "Status": "Waiting",
+      "Remark": ""
+    },
+    {
+      "No": "93",
+      "Agency": "Lembaga Pelabuhan Kelang (LPK)",
+      "ID": "",
+      "Release Date": "",
+      "Type": "IDOR",
+      "IoC": "https://pkapp.pka.gov.my/ncds/complaint/viewdetail1.php?registration_id=NCD-SF-00231",
+      "Status": "Waiting",
+      "Remark": ""
+    },
+    {
+      "No": "94",
+      "Agency": "Perbadanan Harta Intelek Malaysia (MyIPO)",
+      "ID": "INC:20260224-VIC5EM",
+      "Release Date": "24/2/2026",
+      "Type": "PHP Info",
+      "IoC": "https://www.myipo.gov.my/info.php",
+      "Status": "Closed",
+      "Remark": ""
+    },
+    {
+      "No": "95",
+      "Agency": "Jabatan Perkhidmatan Veterinar (DVS)",
+      "ID": "INC:20260223-DEB5OJ",
+      "Release Date": "23/2/2026",
+      "Type": "PHP Info",
+      "IoC": "https://research.dvs.gov.my/info.php",
+      "Status": "Closed",
+      "Remark": ""
+    },
+    {
+      "No": "96",
+      "Agency": "Jabatan Perkhidmatan Veterinar (DVS)",
+      "ID": "",
+      "Release Date": "",
+      "Type": "Admin Login",
+      "IoC": "https://research.dvs.gov.my/wp-login.php",
+      "Status": "Closed",
+      "Remark": ""
+    },
+    {
+      "No": "97",
+      "Agency": "Jabatan Bomba dan Penyelamat Malaysia (JBPM)",
+      "ID": "INC:20260225-FIB1IJ",
+      "Release Date": "25/2/2026",
+      "Type": "PHP Info",
+      "IoC": "https://www.bomba.gov.my/phpinfo.php",
+      "Status": "Closed",
+      "Remark": "action taken - 25/2"
+    },
+    {
+      "No": "98",
+      "Agency": "Majlis Bandaraya Ipoh (MBI)",
+      "ID": "INC:20260206-VOF0OB",
+      "Release Date": "6/2/2026",
+      "Type": "PHP Info",
+      "IoC": "https://mbi.gov.my/test.php",
+      "Status": "Closed",
+      "Remark": "action taken - 10/2"
+    },
+    {
+      "No": "99",
+      "Agency": "Keretapi Tanah Melayu Berhad (KTMB)",
+      "ID": "INC:20260130-XIM3EZ",
+      "Release Date": "30/1/2026",
+      "Type": "Admin Login",
+      "IoC": "http://tms.ktmb.com.my:8080/",
+      "Status": "Closed",
+      "Remark": ""
+    },
+    {
+      "No": "100",
+      "Agency": "Lembaga Pembangunan Industri Pembinaan Malaysia (CIDB)",
+      "ID": "INC:20260206-NEC2AD",
+      "Release Date": "6/2/2026",
+      "Type": "Admin Login",
+      "IoC": "https://cidb.gov.my/wp-login.php",
+      "Status": "Closed",
+      "Remark": ""
+    },
+    {
+      "No": "101",
+      "Agency": "Pejabat Setiausaha Kerajaan (SUK) Negeri Kelantan",
+      "ID": "INC:20260203-BUP5OY",
+      "Release Date": "3/2/2026",
+      "Type": "Admin Login",
+      "IoC": "https://www.kelantan.gov.my/phpmyadmin",
+      "Status": "Closed",
+      "Remark": "action taken - 4/2"
+    },
+    {
+      "No": "102",
+      "Agency": "Kementerian Sumber Manusia (KESUMA)",
+      "ID": "INC:20260203-SIV9EY",
+      "Release Date": "3/2/2026",
+      "Type": "Admin Login",
+      "IoC": "1. https://gerbang.mohr.gov.my/phpmyadmin 2. https://eakta.mohr.gov.my/phpMyAdmin 3. https://directory.mohr.gov.my/phpMyAdmin 4. https://psikologi.mohr.gov.my/phpmyadmin 5. https://gajiminimum.mohr.gov.my/phpmyadmin",
+      "Status": "Closed",
+      "Remark": "action taken - 4/2"
+    },
+    {
+      "No": "103",
+      "Agency": "Jabatan Perikanan Malaysia (DOF)",
+      "ID": "INC:20260210-HEF2ET",
+      "Release Date": "10/2/2026",
+      "Type": "Admin Login",
+      "IoC": "http://eagroperikanan.dof.gov.my/phpmyadmin",
+      "Status": "Closed",
+      "Remark": "action taken - 12/2"
+    },
+    {
+      "No": "104",
+      "Agency": "Pejabat Setiausaha Kerajaan (SUK) Negeri Pahang",
+      "ID": "INC:20260415-VES5UF",
+      "Release Date": "15/4/2026",
+      "Type": "Admin Login",
+      "IoC": "https://espanp2.pahang.gov.my/phpmyadmin/",
+      "Status": "Open",
+      "Remark": ""
+    },
+    {
+      "No": "105",
+      "Agency": "Bahagian Pengurusan Biodiversiti dan Perhutanan, Kementerian Sumber Asli dan Kelestarian Alam (NRES)",
+      "ID": "",
+      "Release Date": "",
+      "Type": "Admin Login",
+      "IoC": "1. https://cms.mybis.gov.my/phpmyadmin 2. https://mybis.gov.my/phpmyadmin",
+      "Status": "Waiting",
+      "Remark": ""
+    },
+    {
+      "No": "106",
+      "Agency": "Pertubuhan Keselamatan Sosial (PERKESO)",
+      "ID": "INC:20260213-NIF0OY",
+      "Release Date": "13/2",
+      "Type": "Admin Login",
+      "IoC": "https://shoutout.perkeso.gov.my/phpmyadmin",
+      "Status": "Closed",
+      "Remark": ""
+    },
+    {
+      "No": "107",
+      "Agency": "Jabatan Penjara Malaysia",
+      "ID": "",
+      "Release Date": "",
+      "Type": "Admin Login",
+      "IoC": "1. https://ikom.prison.gov.my/administrator 2. https://akademi.prison.gov.my/administrator 3. https://sukpenv2.prison.gov.my/administrator https://plpp.prison.gov.my/administrator https://persiap.prison.gov.my/administrator https://webpoa.prison.gov.my/administrator https://www.prison.gov.my/administrator",
+      "Status": "Waiting",
+      "Remark": ""
+    },
+    {
+      "No": "108",
+      "Agency": "Galeri Aplikasi Mudah Alih Kerajaan Malaysia , JDN",
+      "ID": "",
+      "Release Date": "",
+      "Type": "Admin Login",
+      "IoC": "https://gamma.malaysia.gov.my/administrator",
+      "Status": "Closed",
+      "Remark": "no longer access - 12/3"
+    },
+    {
+      "No": "109",
+      "Agency": "Pusat Hidrografi Nasional",
+      "ID": "INC:20260331-BED9OM",
+      "Release Date": "31/3/2026",
+      "Type": "Admin Login",
+      "IoC": "https://ehydro.hydro.gov.my/admin",
+      "Status": "Closed",
+      "Remark": ""
+    },
+    {
+      "No": "110",
+      "Agency": "Jabatan Agama Islam Pahang (JAIP)",
+      "ID": "INC:20260205-VOC7EV",
+      "Release Date": "5/2/2026",
+      "Type": "Admin Login",
+      "IoC": "https://jaip.pahang.gov.my/administrator",
+      "Status": "Closed",
+      "Remark": "action taken - 10/2"
+    },
+    {
+      "No": "111",
+      "Agency": "Jabatan Perkhidmatan Kebajikan Am Sabah",
+      "ID": "INC:20260312-CUT2UJ",
+      "Release Date": "12/3/2026",
+      "Type": "Admin Login",
+      "IoC": "https://jpka.sabah.gov.my/administrator",
+      "Status": "Closed",
+      "Remark": "action taken - 10/3"
+    },
+    {
+      "No": "112",
+      "Agency": "Jabatan Tenaga Kerja (JTK) Sabah",
+      "ID": "INC:20260326-JOS4IQ",
+      "Release Date": "26/3/2026",
+      "Type": "Admin Login",
+      "IoC": "https://jtksbh.mohr.gov.my/administrator",
+      "Status": "Closed",
+      "Remark": ""
+    },
+    {
+      "No": "113",
+      "Agency": "Perpustakaan Negara Malaysia (PNM)",
+      "ID": "INC:20260209-QIY1IX",
+      "Release Date": "9/2/2026",
+      "Type": "Admin Login",
+      "IoC": "https://elmm.pnm.gov.my/phpmyadmin/",
+      "Status": "Closed",
+      "Remark": "action taken - 10/2"
+    },
+    {
+      "No": "114",
+      "Agency": "Kementerian Ekonomi",
+      "ID": "INC:20260224-NAR6OW",
+      "Release Date": "24/2/2026",
+      "Type": "PHP Info",
+      "IoC": "https://ekonomi.gov.my/info.php",
+      "Status": "Closed",
+      "Remark": ""
+    },
+    {
+      "No": "115",
+      "Agency": "Institut Maritim Malaysia (MIMA)",
+      "ID": "INC:20260205-GEN2EJ",
+      "Release Date": "5/2/2026",
+      "Type": "PHP Info",
+      "IoC": "https://mima.gov.my/info.php",
+      "Status": "Closed",
+      "Remark": "action taken - 6/2"
+    },
+    {
+      "No": "116",
+      "Agency": "Majlis Bandaraya Petaling Jaya (MBPJ)",
+      "ID": "INC:20260213-BAB1AQ",
+      "Release Date": "13/2/26",
+      "Type": "PHP Info",
+      "IoC": "https://api.mbpj.gov.my/phpinfo.php https://www.mbpj.gov.my/info.php",
+      "Status": "Closed",
+      "Remark": "action taken - 16/2"
+    },
+    {
+      "No": "117",
+      "Agency": "Pejabat Setiausaha Kerajaan (SUK) Negeri Terengganu",
+      "ID": "INC:20260209-NIX1EW",
+      "Release Date": "9/2/2026",
+      "Type": "Admin Login",
+      "IoC": "https://www.terengganu.gov.my/administrator/",
+      "Status": "Closed",
+      "Remark": "agensi menyatakan mempunyai keperluan untuk membenarkan sistem tersebut boleh diakses melalui rangkaian awam"
+    },
+    {
+      "No": "118",
+      "Agency": "Pejabat Setiausaha Kerajaan (SUK) Negeri Melaka",
+      "ID": "INC:20260211-GAH3AG",
+      "Release Date": "11/2/2026",
+      "Type": "Admin Login",
+      "IoC": "https://www.melaka.gov.my/administrator/",
+      "Status": "Closed",
+      "Remark": "action taken - 14/2"
+    },
+    {
+      "No": "119",
+      "Agency": "Seksyen Pengurusan Psikologi, Jabatan Perdana Menteri (JPM)",
+      "ID": "INC:20260216-TOB7AB",
+      "Release Date": "16/2/2026",
+      "Type": "Admin Login",
+      "IoC": "https://epsikologi.jpm.gov.my/wp-login.php",
+      "Status": "Closed",
+      "Remark": ""
+    },
+    {
+      "No": "120",
+      "Agency": "Jabatan Perhutanan Sabah",
+      "ID": "",
+      "Release Date": "",
+      "Type": "Admin Login",
+      "IoC": "https://forest.sabah.gov.my/wp-login.php",
+      "Status": "Waiting",
+      "Remark": ""
+    },
+    {
+      "No": "121",
+      "Agency": "Dewan Negeri Selangor",
+      "ID": "",
+      "Release Date": "",
+      "Type": "Admin Login",
+      "IoC": "https://dewan.selangor.gov.my/ci/admin/auth/login",
+      "Status": "Waiting",
+      "Remark": ""
+    },
+    {
+      "No": "122",
+      "Agency": "ADTEC JTM Kampus Pasir Gudang & Kampus Senai",
+      "ID": "",
+      "Release Date": "",
+      "Type": "Index List",
+      "IoC": "1. https://www.ilppg.gov.my/v3/wp-includes/SimplePie/src/Parse/ 2. https://www.ilppg.gov.my/v3/wp-content/themes/Divi/includes/builder/frontend-builder/assets/vendors/themes/ 3. https://www.ilppg.gov.my/v3/wp-content/themes/Divi/includes/builder/module/field/ 4. https://www.ilppg.gov.my/v3/wp-includes/Requests/ 5. https://www.ilppg.gov.my/v3/wp-includes/SimplePie/ 6. https://www.ilppg.gov.my/v3/wp-includes/sodium_compat/ 7. https://www.ilppg.gov.my/v3/wp-includes/js/ 8. https://www.ilppg.gov.my/v3/wp-includes/Text/ 9. https://www.ilppg.gov.my/v3/wp-includes/rest-api/ 10. https://www.ilppg.gov.my/v3/wp-includes/js/ 11. https://www.ilppg.gov.my/v3/wp-includes/css/ 12. https://www.ilppg.gov.my/v3/wp-includes/sitemaps/",
+      "Status": "Closed",
+      "Remark": "dah xleh akses - 15/4"
+    },
+    {
+      "No": "123",
+      "Agency": "Majlis Daerah Kuala Pilah (MDKP)",
+      "ID": "INC:20260126-YAT3IM",
+      "Release Date": "19/2/2026",
+      "Type": "Index List",
+      "IoC": "https://mdkp.gov.my/wp-content/plugins/wp-file-download/",
+      "Status": "CTM",
+      "Remark": ""
+    },
+    {
+      "No": "124",
+      "Agency": "ADTEC JTM Kampus Jitra",
+      "ID": "",
+      "Release Date": "",
+      "Type": "Index List",
+      "IoC": "https://www.ilpjitra.gov.my/wp-content/themes/Divi/includes/builder/scripts/",
+      "Status": "Closed",
+      "Remark": "dah xleh akses - 26/2"
+    },
+    {
+      "No": "125",
+      "Agency": "Jabatan Tenaga Manusia (JTM)",
+      "ID": "INC:20260406-JOK9UM",
+      "Release Date": "6/4/2026",
+      "Type": "Index List",
+      "IoC": "https://esgjtm.gov.my/wp-content/plugins/photo-gallery/",
+      "Status": "Closed",
+      "Remark": ""
+    },
+    {
+      "No": "126",
+      "Agency": "ADTEC JTM Kampus Ipoh",
+      "ID": "INC:20260406-PIM2AW",
+      "Release Date": "7/4/2026",
+      "Type": "Index List",
+      "IoC": "https://www.ilpipoh.gov.my/wp-content/themes/Divi/includes/",
+      "Status": "Open",
+      "Remark": ""
+    },
+    {
+      "No": "127",
+      "Agency": "Jabatan Kerja Raya (JKR)",
+      "ID": "INC:20251002-LOC4EX",
+      "Release Date": "",
+      "Type": "Index List",
+      "IoC": "http://epsmg.jkr.gov.my/images/",
+      "Status": "Closed",
+      "Remark": "Pernah keluarkan INC:20251002-LOC4EX"
+    },
+    {
+      "No": "128",
+      "Agency": "Jabatan Kehakiman Syariah Malaysia (JKSM)",
+      "ID": "",
+      "Release Date": "",
+      "Type": "Index List",
+      "IoC": "https://www.jksm.gov.my/wp-content/plugins/pdf-poster/",
+      "Status": "Closed",
+      "Remark": "dah xleh akses - 26/2"
+    },
+    {
+      "No": "129",
+      "Agency": "Perbadanan Pembangunan Ladang Rakyat Negeri Kelantan (PPLRNK)",
+      "ID": "INC:20260416-BOQ4AZ",
+      "Release Date": "16/4/2026",
+      "Type": "Index List",
+      "IoC": "https://pplrnk.gov.my/wp-content/plugins/essential-blocks/",
+      "Status": "Open",
+      "Remark": ""
+    },
+    {
+      "No": "130",
+      "Agency": "Pejabat Pengarah Tanah dan Galian (PTG) Pahang",
+      "ID": "INC:20260219-TEZ6UV",
+      "Release Date": "19/2/2026",
+      "Type": "PHP Info",
+      "IoC": "https://ptg.pahang.gov.my/phpinfo.php",
+      "Status": "Closed",
+      "Remark": "action taken - 23/2"
+    },
+    {
+      "No": "131",
+      "Agency": "Jabatan Kesihatan Negeri, Negeri Sembilan (JKNNS)",
+      "ID": "INC:20260305-VIV4OY",
+      "Release Date": "5/3/2026",
+      "Type": "Index List",
+      "IoC": "https://wbf.jknns.moh.gov.my/xampp/",
+      "Status": "Closed",
+      "Remark": ""
+    },
+    {
+      "No": "132",
+      "Agency": "Bahagian Perancangan, Kementerian Kesihatan Malaysia (KKM)",
+      "ID": "INC:20260225-FAD0OW",
+      "Release Date": "25/2/2026",
+      "Type": "Admin Login",
+      "IoC": "http://ebm.moh.gov.my:80/phpmyadmin/index.php",
+      "Status": "Closed",
+      "Remark": "from mandiant"
+    },
+    {
+      "No": "133",
+      "Agency": "Jabatan Perhubungan Perusahaan Malaysia",
+      "ID": "",
+      "Release Date": "",
+      "Type": "Admin Login",
+      "IoC": "https://jpp.mohr.gov.my/wp-login.php",
+      "Status": "Waiting",
+      "Remark": ""
+    },
+    {
+      "No": "134",
+      "Agency": "Jabatan Kebudayaan dan Kesenian Negara (JKKN)",
+      "ID": "INC:20260318-KEX6AZ",
+      "Release Date": "18/3/2026",
+      "Type": "PHP Info",
+      "IoC": "https://portal.jkkn.gov.my/info.php",
+      "Status": "Closed",
+      "Remark": ""
+    },
+    {
+      "No": "135",
+      "Agency": "Pusat Hidrografi Nasional",
+      "ID": "INC:20260226-XEX2IG",
+      "Release Date": "26/2/2026",
+      "Type": "PHP Info",
+      "IoC": "https://etide.hydro.gov.my/test.php",
+      "Status": "Closed",
+      "Remark": ""
+    },
+    {
+      "No": "136",
+      "Agency": "SUK Johor",
+      "ID": "",
+      "Release Date": "",
+      "Type": "PHP Info",
+      "IoC": "https://elatihan.johor.gov.my/info.php",
+      "Status": "Closed",
+      "Remark": "dah xleh akses - 26/3"
+    },
+    {
+      "No": "137",
+      "Agency": "Jabatan Perlindungan Hidupan Liar dan Taman Negara (PERHILITAN)",
+      "ID": "INC:20260226-RAV7UV",
+      "Release Date": "26/2/2026",
+      "Type": "PHP Info",
+      "IoC": "https://ipaw.wildlife.gov.my/phpinfo.php",
+      "Status": "Closed",
+      "Remark": ""
+    },
+    {
+      "No": "138",
+      "Agency": "SUK Melaka",
+      "ID": "",
+      "Release Date": "",
+      "Type": "Exposed Data",
+      "IoC": "https://stom.melaka.gov.my/uploads/0514ba12518606b0092fab1a7d6475c1/10a62f9b8a67debb6fe92887cbdb72ef.pdf",
+      "Status": "Waiting",
+      "Remark": ""
+    },
+    {
+      "No": "139",
+      "Agency": "Pejabat Ketua Pendaftar Mahkamah Persekutuan Malaysia (PKPMP)",
+      "ID": "",
+      "Release Date": "",
+      "Type": "Exposed Data",
+      "IoC": "https://intranet.kehakiman.gov.my/EAA/arahanamalan/21962-2019-EAA.pdf",
+      "Status": "Waiting",
+      "Remark": ""
+    },
+    {
+      "No": "140",
+      "Agency": "TEKUN Nasional",
+      "ID": "INC:20260327-REY3UT",
+      "Release Date": "27/3/2026",
+      "Type": "PHP Info",
+      "IoC": "https://tekun.gov.my/info.php",
+      "Status": "Closed",
+      "Remark": ""
+    },
+    {
+      "No": "141",
+      "Agency": "Agensi Penguatkuasaan Maritim Malaysia (APMM)",
+      "ID": "INC:20260303-JEG6OX",
+      "Release Date": "3/3/2026",
+      "Type": "PHP Info",
+      "IoC": "https://intersys.mmea.gov.my/info.php",
+      "Status": "Closed",
+      "Remark": ""
+    },
+    {
+      "No": "142",
+      "Agency": "Jabatan Perkhidmatan Awam (JPA)",
+      "ID": "INC:20260304-XIP0OD",
+      "Release Date": "4/3/2026",
+      "Type": "PHP Info",
+      "IoC": "https://esilav2.jpa.gov.my/phpinfo.php",
+      "Status": "Closed",
+      "Remark": "action taken - 5/3"
+    },
+    {
+      "No": "143",
+      "Agency": "Majlis Bandaraya Ipoh (MBI)",
+      "ID": "INC:20260311-JAV7OX",
+      "Release Date": "11/3/2026",
+      "Type": "Admin Login",
+      "IoC": "1. http://e-lesen.mbi.gov.my/phpmyadmin",
+      "Status": "Closed",
+      "Remark": "action taken - 13/3"
+    },
+    {
+      "No": "144",
+      "Agency": "Lembaga Pembangunan Industri Pembinaan Malaysia (CIDB)",
+      "ID": "INC:20260309-NAD8OM",
+      "Release Date": "9/3/2026",
+      "Type": "Admin Login",
+      "IoC": "https://www.cidb.gov.my/phpmyadmin",
+      "Status": "Closed",
+      "Remark": ""
+    },
+    {
+      "No": "145",
+      "Agency": "Jabatan Tenaga Kerja Sarawak",
+      "ID": "INC:20260316-YEY8ER",
+      "Release Date": "16/3/2026",
+      "Type": "Admin Login",
+      "IoC": "https://jtkswk.gov.my/phpmyadmin",
+      "Status": "Closed",
+      "Remark": ""
+    },
+    {
+      "No": "146",
+      "Agency": "Majlis Perbandaran Selayang",
+      "ID": "",
+      "Release Date": "",
+      "Type": "PHP Error",
+      "IoC": "https://mps.gov.my/en/node/4892",
+      "Status": "Closed",
+      "Remark": "please recheck. looks like action taken 8/3"
+    },
+    {
+      "No": "147",
+      "Agency": "Kementerian Pendidikan Malaysia (KPM)",
+      "ID": "INC:20260309-CAL9IY",
+      "Release Date": "9/3/2026",
+      "Type": "PHP Info",
+      "IoC": "https://lp.moe.gov.my/phpinfo.php",
+      "Status": "Closed",
+      "Remark": ""
+    },
+    {
+      "No": "148",
+      "Agency": "Pejabat Ketua Pendaftar Mahkamah Persekutuan Malaysia (PKPMP)",
+      "ID": "INC:20260210-FIR3OR",
+      "Release Date": "10/2/2026",
+      "Type": "PHP Info",
+      "IoC": "https://helpdesk.kehakiman.gov.my/info.php",
+      "Status": "Closed",
+      "Remark": ""
+    },
+    {
+      "No": "149",
+      "Agency": "Majlis Amanah Rakyat Malaysia (MARA)",
+      "ID": "INC:20260211-HUG6EZ",
+      "Release Date": "11/2/2026",
+      "Type": "Admin Login",
+      "IoC": "https://portaldev.mara.gov.my:443/phpmyadmin/index.php",
+      "Status": "CTM",
+      "Remark": ""
+    },
+    {
+      "No": "150",
+      "Agency": "Majlis Daerah Besut",
+      "ID": "INC:20260303-JOB3EM",
+      "Release Date": "3/3/2026",
+      "Type": "Index List",
+      "IoC": "https://online.mdbesut.gov.my/online/",
+      "Status": "Closed",
+      "Remark": ""
+    },
+    {
+      "No": "151",
+      "Agency": "Hospital Kuala Lumpur (HKL)",
+      "ID": "INC:20260305-POV8IQ",
+      "Release Date": "5/3/2026",
+      "Type": "Exposed Git Repo",
+      "IoC": "https://dbwhkl.moh.gov.my:443/.git",
+      "Status": "Closed",
+      "Remark": "from mandiant"
+    },
+    {
+      "No": "152",
+      "Agency": "Bahagian Pengurusan Hartanah",
+      "ID": "",
+      "Release Date": "",
+      "Type": "Index List",
+      "IoC": "https://www.bph.gov.my/portal/wp-content/plugins/addon-elements-for-elementor-page-builder/inc/",
+      "Status": "Waiting",
+      "Remark": ""
+    },
+    {
+      "No": "153",
+      "Agency": "Majlis Bandaraya Ipoh (MBI)",
+      "ID": "INC:20260417-VAC4OY",
+      "Release Date": "17/4/2026",
+      "Type": "PHP Error",
+      "IoC": "https://mynorisk.mbi.gov.my/phpmyadmin",
+      "Status": "Open",
+      "Remark": ""
+    },
+    {
+      "No": "154",
+      "Agency": "Jabatan Perhutanan Semenanjung Malaysia (JPSM)",
+      "ID": "",
+      "Release Date": "",
+      "Type": "Vulnerability",
+      "IoC": "https://www.forestry.gov.my/my/component/finder/search?q=slot.%20gacor%E3%80%90pp.bingo%E3%80%91.krcf",
+      "Status": "Waiting",
+      "Remark": ""
+    },
+    {
+      "No": "155",
+      "Agency": "Majlis Amanah Rakyat Malaysia (MARA)",
+      "ID": "INC:20260406-KAB8AW",
+      "Release Date": "6/4/2026",
+      "Type": "PHP Info",
+      "IoC": "https://www.mara.gov.my/phpinfo.php",
+      "Status": "Closed",
+      "Remark": ""
+    },
+    {
+      "No": "156",
+      "Agency": "Perbadanan Putrajaya (PPj)",
+      "ID": "",
+      "Release Date": "",
+      "Type": "Debug Bar",
+      "IoC": "http://devfoamms.ppj.gov.my/",
+      "Status": "Closed",
+      "Remark": "13/4 - dah xleh akses"
+    },
+    {
+      "No": "157",
+      "Agency": "Pejabat Daerah dan Tanah Seremban",
+      "ID": "INC:20260410-DOF5OC",
+      "Release Date": "10/4/2026",
+      "Type": "Admin Login",
+      "IoC": "https://seremban.ns.gov.my/wp-login.php?redirect_to=https%3A%2F%2Fseremban.ns.gov.my%2Fwp-admin%2F&reauth=1",
+      "Status": "Closed",
+      "Remark": ""
+    },
+    {
+      "No": "158",
+      "Agency": "Majlis Daerah Jerantut (MD Jerantut)",
+      "ID": "INC:20260409-BOR3AB",
+      "Release Date": "9/4/2026",
+      "Type": "Admin Login",
+      "IoC": "https://mdjerantut.gov.my/wp01/wp-login.php?redirect_to=https%3A%2F%2Fmdjerantut.gov.my%2Fwp01%2Fwp-admin%2F&reauth=1",
+      "Status": "Closed",
+      "Remark": ""
+    },
+    {
+      "No": "159",
+      "Agency": "Jabatan Kesihatan Negeri Melaka",
+      "ID": "INC:20260415-HAJ0UC",
+      "Release Date": "15/4/2026",
+      "Type": "Exposed Git Repo",
+      "IoC": "https://espel2.ijknm.moh.gov.my/.git/",
+      "Status": "Open",
+      "Remark": ""
+    },
+    {
+      "No": "160",
+      "Agency": "Majlis Daerah Mersing",
+      "ID": "INC:20260410-XIW3ON",
+      "Release Date": "10/4/2026",
+      "Type": "Vulnerability",
+      "IoC": "https://mersing.gov.my/author/vickiearl9762/",
+      "Status": "Closed",
+      "Remark": "SEO spam"
+    },
+    {
+      "No": "161",
+      "Agency": "Jabatan Bomba dan Penyelamat Malaysia (JBPM)",
+      "ID": "INC:20260413-YAQ6AY",
+      "Release Date": "13/4/2026",
+      "Type": "Vulnerability",
+      "IoC": "https://www.bomba.gov.my/en/banner/panduan-keselamatan-pkp/attachment/6/ https://www.bomba.gov.my/en/no-sidebar-content-centered/ https://www.bomba.gov.my/en/ketua-pegawai-maklumat/attachment/xk3ylxaf_400x400/ https://www.bomba.gov.my/en/banner/hotline-covid-19-kpt/attachment/7/ https://www.bomba.gov.my/pakaian-pegawai-bomba/attachment/pakaian_pegawai_bomba/",
+      "Status": "Open",
+      "Remark": "Dah pernah hantar tapi ada lagi dekat post lain SEO spam"
+    },
+    {
+      "No": "162",
+      "Agency": "Institut Penyelidikan Pembangunan Belia Malaysia (IYRES)",
+      "ID": "",
+      "Release Date": "",
+      "Type": "Vulnerability",
+      "IoC": "https://apjys.iyres.gov.my/decouvrez-malina-online-casino-une-revolution-dans-le-monde-du-jeu-en-ligne/",
+      "Status": "Closed",
+      "Remark": "ini tak pasti SEO spam atau SEO poisoning 8/4/2026 - page not found"
+    },
+    {
+      "No": "163",
+      "Agency": "ADTEC JTM Kampus Mersing",
+      "ID": "",
+      "Release Date": "",
+      "Type": "Vulnerability",
+      "IoC": "https://www.ilpmsg.gov.my/2023/06/26/maintenance/",
+      "Status": "Waiting",
+      "Remark": "SEO spam 8/4/2026 - website sedang diselenggara"
+    },
+    {
+      "No": "164",
+      "Agency": "Pertubuhan Berita Nasional Malaysia (BERNAMA)",
+      "ID": "",
+      "Release Date": "",
+      "Type": "Exposed Git Repo",
+      "IoC": "https://trueconf2.bernama.com/.git/config https://trueconf3.bernama.com/.git/config https://nextcloud.bernama.com/.git/config https://blis4.bernama.com/.git/config https://blis.bernama.com:443/.git/config",
+      "Status": "Waiting",
+      "Remark": ""
+    },
+    {
+      "No": "165",
+      "Agency": "Kementerian Sains, Teknologi dan Inovasi (MOSTI)",
+      "ID": "",
+      "Release Date": "",
+      "Type": "Exposed Git Repo",
+      "IoC": "https://nrs.mosti.gov.my/.git/config",
+      "Status": "Waiting",
+      "Remark": ""
+    },
+    {
+      "No": "166",
+      "Agency": "Perbadanan Putrajaya (PPj)",
+      "ID": "INC:20260408-YIF4UJ",
+      "Release Date": "8/4/2026",
+      "Type": "Admin Login",
+      "IoC": "http://devfoamms.ppj.gov.my:80/phpmyadmin/index.php",
+      "Status": "Closed",
+      "Remark": "from mandiant"
+    },
+    {
+      "No": "167",
+      "Agency": "Lembaga Perancang Bandar Malaysia (LPBM)",
+      "ID": "INC:20260403-LOC4UY",
+      "Release Date": "3/4/2026",
+      "Type": "Index List",
+      "IoC": "https://lpbm.gov.my/assets/",
+      "Status": "Closed",
+      "Remark": ""
+    },
+    {
+      "No": "168",
+      "Agency": "Jabatan Pengairan dan Saliran (JPS)",
+      "ID": "INC:20260403-BAQ6UV",
+      "Release Date": "3/4/2026",
+      "Type": "Admin Login",
+      "IoC": "http://sprhin.water.gov.my/bin/sprhin-admin/login.cfm",
+      "Status": "CTM",
+      "Remark": ""
+    },
+    {
+      "No": "169",
+      "Agency": "Majlis Amanah Rakyat Malaysia (MARA)",
+      "ID": "INC:20260406-KAB8AW",
+      "Release Date": "6/4/2026",
+      "Type": "PHP Info",
+      "IoC": "https://www.mara.gov.my/phpinfo.php",
+      "Status": "Closed",
+      "Remark": ""
+    },
+    {
+      "No": "170",
+      "Agency": "Institut Sosial Malaysia (ISM)",
+      "ID": "",
+      "Release Date": "",
+      "Type": "Index List",
+      "IoC": "https://ijsps.ism.gov.my/public/site/",
+      "Status": "Waiting",
+      "Remark": ""
+    },
+    {
+      "No": "171",
+      "Agency": "Lembaga Pemasaran Pertanian Persekutuan (FAMA)",
+      "ID": "INC:20260409-NAQ9AW",
+      "Release Date": "9/4/2026",
+      "Type": "Admin Login",
+      "IoC": "https://www.fama.gov.my/web/adminportal/home?p_p_id=com_liferay_login_web_portlet_LoginPortlet&p_p_lifecycle=0&p_p_state=maximized&p_p_mode=view&saveLastPath=false&_com_liferay_login_web_portlet_LoginPortlet_mvcRenderCommandName=%2Flogin%2Flogin",
+      "Status": "Closed",
+      "Remark": ""
+    },
+    {
+      "No": "172",
+      "Agency": "Suruhanjaya Perkhidmatan Awam Malaysia (SPA)",
+      "ID": "INC:20260414-BIQ5AX",
+      "Release Date": "14/4/2026",
+      "Type": "Admin Login",
+      "IoC": "https://www.spa.gov.my/index.php?option=com_users&view=login&Itemid=435",
+      "Status": "Open",
+      "Remark": ""
+    },
+    {
+      "No": "173",
+      "Agency": "Majlis Perbandaran Kulim",
+      "ID": "",
+      "Release Date": "",
+      "Type": "Admin Login",
+      "IoC": "https://msb.mpkk.gov.my/admin-login",
+      "Status": "Closed",
+      "Remark": "Dah pernah hantar, agensi mmg letak untuk public access cuma ada 2FA untuk admin"
+    },
+    {
+      "No": "174",
+      "Agency": "Pejabat Tanah Dan Jajahan Kota Bharu",
+      "ID": "",
+      "Release Date": "",
+      "Type": "Admin Login",
+      "IoC": "https://teratanahkb.kelantan.gov.my/login.php",
+      "Status": "Waiting",
+      "Remark": ""
+    },
+    {
+      "No": "175",
+      "Agency": "Suruhanjaya Perkhidmatan Pendidikan (SPP)",
+      "ID": "",
+      "Release Date": "",
+      "Type": "Exposed Git Repo",
+      "IoC": "https://espp.spp.gov.my:443/.git/config https://eujian.spp.gov.my:443/.git/config",
+      "Status": "Waiting",
+      "Remark": "emel draft"
+    },
+    {
+      "No": "176",
+      "Agency": "Perbadanan Putrajaya (PPj)",
+      "ID": "INC:20260414-QED2UK",
+      "Release Date": "14/4/2026",
+      "Type": "Admin Login",
+      "IoC": "https://spait.ppj.gov.my/phpmyadmin/index.php",
+      "Status": "Closed",
+      "Remark": ""
+    },
+    {
+      "No": "177",
+      "Agency": "Pejabat Setiausaha Kerajaan (SUK) Negeri Perak",
+      "ID": "",
+      "Release Date": "",
+      "Type": "Index List",
+      "IoC": "http://ismartpantau.perak.gov.my/library/slide/",
+      "Status": "Waiting",
+      "Remark": ""
+    },
+    {
+      "No": "178",
+      "Agency": "Institut Alam Sekitar Malaysia (EiMAS) Jabatan Alam Sekitar",
+      "ID": "",
+      "Release Date": "",
+      "Type": "Index List",
+      "IoC": "https://eimas.doe.gov.my/wp-content/plugins/pdf-embedder/assets/js/ https://eimas.doe.gov.my/wp-content/plugins/pdf-embedder/src/",
+      "Status": "Waiting",
+      "Remark": ""
+    },
+    {
+      "No": "179",
+      "Agency": "Institut Maklumat dan Analisis Pasaran Buruh (ILMIA)",
+      "ID": "",
+      "Release Date": "",
+      "Type": "Index List",
+      "IoC": "https://www.ilmia.gov.my/BDA/ https://www.ilmia.gov.my/components/com_banners/helpers/",
+      "Status": "Waiting",
+      "Remark": ""
+    },
+    {
+      "No": "180",
+      "Agency": "Jabatan Wakaf, Zakat dan Haji (JAWHAR)",
+      "ID": "INC:20260417-ZOG6UF",
+      "Release Date": "17/4/2026",
+      "Type": "Index List",
+      "IoC": "https://journal.jawhar.gov.my/wp-content/plugins/visitors-traffic-real-time-statistics/lang/ https://journal.jawhar.gov.my/wp-content/plugins/visitors-traffic-real-time-statistics/images/",
+      "Status": "Open",
+      "Remark": ""
+    },
+    {
+      "No": "J1",
+      "Agency": "akademi.prison.gov.my",
+      "ID": "",
+      "Release Date": "",
+      "Type": "Admin Login",
+      "IoC": "https://akademi.prison.gov.my/administrator",
+      "Status": "Waiting",
+      "Remark": "Joomla admin panel exposed - dorking scan 17/4/2026"
+    },
+    {
+      "No": "J2",
+      "Agency": "bepi.mpob.gov.my",
+      "ID": "",
+      "Release Date": "",
+      "Type": "Admin Login",
+      "IoC": "https://bepi.mpob.gov.my/administrator",
+      "Status": "Waiting",
+      "Remark": "Joomla admin panel exposed - dorking scan 17/4/2026"
+    },
+    {
+      "No": "J3",
+      "Agency": "ddms.malaysia.gov.my",
+      "ID": "",
+      "Release Date": "",
+      "Type": "Admin Login",
+      "IoC": "http://ddms.malaysia.gov.my/administrator",
+      "Status": "Waiting",
+      "Remark": "Joomla admin panel exposed - dorking scan 17/4/2026"
+    },
+    {
+      "No": "J4",
+      "Agency": "direktori.prison.gov.my",
+      "ID": "",
+      "Release Date": "",
+      "Type": "Admin Login",
+      "IoC": "https://direktori.prison.gov.my/administrator",
+      "Status": "Waiting",
+      "Remark": "Joomla admin panel exposed - dorking scan 17/4/2026"
+    },
+    {
+      "No": "J5",
+      "Agency": "gamma.malaysia.gov.my",
+      "ID": "",
+      "Release Date": "",
+      "Type": "Admin Login",
+      "IoC": "https://gamma.malaysia.gov.my/administrator",
+      "Status": "Waiting",
+      "Remark": "Joomla admin panel exposed - dorking scan 17/4/2026"
+    },
+    {
+      "No": "J6",
+      "Agency": "hydro.gov.my",
+      "ID": "",
+      "Release Date": "",
+      "Type": "Admin Login",
+      "IoC": "https://hydro.gov.my/administrator",
+      "Status": "Waiting",
+      "Remark": "Joomla admin panel exposed - dorking scan 17/4/2026"
+    },
+    {
+      "No": "J7",
+      "Agency": "ikom.prison.gov.my",
+      "ID": "",
+      "Release Date": "",
+      "Type": "Admin Login",
+      "IoC": "https://ikom.prison.gov.my/administrator",
+      "Status": "Waiting",
+      "Remark": "Joomla admin panel exposed - dorking scan 17/4/2026"
+    },
+    {
+      "No": "J8",
+      "Agency": "jaip.pahang.gov.my",
+      "ID": "",
+      "Release Date": "",
+      "Type": "Admin Login",
+      "IoC": "https://jaip.pahang.gov.my/administrator",
+      "Status": "Waiting",
+      "Remark": "Joomla admin panel exposed - dorking scan 17/4/2026"
+    },
+    {
+      "No": "J9",
+      "Agency": "jpan.sabah.gov.my",
+      "ID": "",
+      "Release Date": "",
+      "Type": "Admin Login",
+      "IoC": "https://jpan.sabah.gov.my/administrator",
+      "Status": "Waiting",
+      "Remark": "Joomla admin panel exposed - dorking scan 17/4/2026"
+    },
+    {
+      "No": "J10",
+      "Agency": "jpka.sabah.gov.my",
+      "ID": "",
+      "Release Date": "",
+      "Type": "Admin Login",
+      "IoC": "https://jpka.sabah.gov.my/administrator",
+      "Status": "Waiting",
+      "Remark": "Joomla admin panel exposed - dorking scan 17/4/2026"
+    },
+    {
+      "No": "J11",
+      "Agency": "library.sabah.gov.my",
+      "ID": "",
+      "Release Date": "",
+      "Type": "Admin Login",
+      "IoC": "https://library.sabah.gov.my/administrator",
+      "Status": "Waiting",
+      "Remark": "Joomla admin panel exposed - dorking scan 17/4/2026"
+    },
+    {
+      "No": "J12",
+      "Agency": "mbj.jpm.gov.my",
+      "ID": "",
+      "Release Date": "",
+      "Type": "Admin Login",
+      "IoC": "https://mbj.jpm.gov.my/administrator",
+      "Status": "Waiting",
+      "Remark": "Joomla admin panel exposed - dorking scan 17/4/2026"
+    },
+    {
+      "No": "J13",
+      "Agency": "mdsb.gov.my",
+      "ID": "",
+      "Release Date": "",
+      "Type": "Admin Login",
+      "IoC": "https://mdsb.gov.my/administrator",
+      "Status": "Waiting",
+      "Remark": "Joomla admin panel exposed - dorking scan 17/4/2026"
+    },
+    {
+      "No": "J14",
+      "Agency": "mphs.gov.my",
+      "ID": "",
+      "Release Date": "",
+      "Type": "Admin Login",
+      "IoC": "https://mphs.gov.my/administrator",
+      "Status": "Waiting",
+      "Remark": "Joomla admin panel exposed - dorking scan 17/4/2026"
+    },
+    {
+      "No": "J15",
+      "Agency": "mpkl.gov.my",
+      "ID": "",
+      "Release Date": "",
+      "Type": "Admin Login",
+      "IoC": "https://mpkl.gov.my/administrator",
+      "Status": "Waiting",
+      "Remark": "Joomla admin panel exposed - dorking scan 17/4/2026"
+    },
+    {
+      "No": "J16",
+      "Agency": "myip.mod.gov.my",
+      "ID": "",
+      "Release Date": "",
+      "Type": "Admin Login",
+      "IoC": "https://myip.mod.gov.my/administrator",
+      "Status": "Waiting",
+      "Remark": "Joomla admin panel exposed - dorking scan 17/4/2026"
+    },
+    {
+      "No": "J17",
+      "Agency": "pdt.pahang.gov.my",
+      "ID": "",
+      "Release Date": "",
+      "Type": "Admin Login",
+      "IoC": "https://pdt.pahang.gov.my/administrator",
+      "Status": "Waiting",
+      "Remark": "Joomla admin panel exposed - dorking scan 17/4/2026"
+    },
+    {
+      "No": "J18",
+      "Agency": "persiap.prison.gov.my",
+      "ID": "",
+      "Release Date": "",
+      "Type": "Admin Login",
+      "IoC": "https://persiap.prison.gov.my/administrator",
+      "Status": "Waiting",
+      "Remark": "Joomla admin panel exposed - dorking scan 17/4/2026"
+    },
+    {
+      "No": "J19",
+      "Agency": "plpp.prison.gov.my",
+      "ID": "",
+      "Release Date": "",
+      "Type": "Admin Login",
+      "IoC": "https://plpp.prison.gov.my/administrator",
+      "Status": "Waiting",
+      "Remark": "Joomla admin panel exposed - dorking scan 17/4/2026"
+    },
+    {
+      "No": "J20",
+      "Agency": "prison.gov.my",
+      "ID": "",
+      "Release Date": "",
+      "Type": "Admin Login",
+      "IoC": "https://prison.gov.my/administrator",
+      "Status": "Waiting",
+      "Remark": "Joomla admin panel exposed - dorking scan 17/4/2026"
+    },
+    {
+      "No": "J21",
+      "Agency": "ptg.pahang.gov.my",
+      "ID": "",
+      "Release Date": "",
+      "Type": "Admin Login",
+      "IoC": "https://ptg.pahang.gov.my/administrator",
+      "Status": "Waiting",
+      "Remark": "Joomla admin panel exposed - dorking scan 17/4/2026"
+    },
+    {
+      "No": "J22",
+      "Agency": "puspanita.mod.gov.my",
+      "ID": "",
+      "Release Date": "",
+      "Type": "Admin Login",
+      "IoC": "https://puspanita.mod.gov.my/administrator/",
+      "Status": "Waiting",
+      "Remark": "Joomla admin panel exposed - dorking scan 17/4/2026"
+    },
+    {
+      "No": "J23",
+      "Agency": "sgmy.moe.gov.my",
+      "ID": "",
+      "Release Date": "",
+      "Type": "Admin Login",
+      "IoC": "https://sgmy.moe.gov.my/administrator/",
+      "Status": "Waiting",
+      "Remark": "Joomla admin panel exposed - dorking scan 17/4/2026"
+    },
+    {
+      "No": "J24",
+      "Agency": "sukpenv2.prison.gov.my",
+      "ID": "",
+      "Release Date": "",
+      "Type": "Admin Login",
+      "IoC": "https://sukpenv2.prison.gov.my/administrator",
+      "Status": "Waiting",
+      "Remark": "Joomla admin panel exposed - dorking scan 17/4/2026"
+    },
+    {
+      "No": "J25",
+      "Agency": "webpoa.prison.gov.my",
+      "ID": "",
+      "Release Date": "",
+      "Type": "Admin Login",
+      "IoC": "https://webpoa.prison.gov.my/administrator",
+      "Status": "Waiting",
+      "Remark": "Joomla admin panel exposed - dorking scan 17/4/2026"
+    },
+    {
+      "No": "J26",
+      "Agency": "wiki.tourlist.gov.my",
+      "ID": "",
+      "Release Date": "",
+      "Type": "Admin Login",
+      "IoC": "https://wiki.tourlist.gov.my/administrator",
+      "Status": "Waiting",
+      "Remark": "Joomla admin panel exposed - dorking scan 17/4/2026"
+    },
+    {
+      "No": "J27",
+      "Agency": "www.jpa.gov.my",
+      "ID": "",
+      "Release Date": "",
+      "Type": "Admin Login",
+      "IoC": "https://www.jpa.gov.my/administrator/index.php",
+      "Status": "Waiting",
+      "Remark": "Joomla admin panel exposed - dorking scan 17/4/2026"
+    },
+    {
+      "No": "J28",
+      "Agency": "www.mbmb.gov.my",
+      "ID": "",
+      "Release Date": "",
+      "Type": "Admin Login",
+      "IoC": "https://www.mbmb.gov.my/administrator",
+      "Status": "Waiting",
+      "Remark": "Joomla admin panel exposed - dorking scan 17/4/2026"
+    },
+    {
+      "No": "J29",
+      "Agency": "www.ns.gov.my",
+      "ID": "",
+      "Release Date": "",
+      "Type": "Admin Login",
+      "IoC": "https://www.ns.gov.my/administrator",
+      "Status": "Waiting",
+      "Remark": "Joomla admin panel exposed - dorking scan 17/4/2026"
+    },
+    {
+      "No": "J30",
+      "Agency": "www.prison.gov.my",
+      "ID": "",
+      "Release Date": "",
+      "Type": "Admin Login",
+      "IoC": "https://www.prison.gov.my/administrator",
+      "Status": "Waiting",
+      "Remark": "Joomla admin panel exposed - dorking scan 17/4/2026"
+    },
+    {
+      "No": "J31",
+      "Agency": "www.terengganu.gov.my",
+      "ID": "",
+      "Release Date": "",
+      "Type": "Admin Login",
+      "IoC": "https://www.terengganu.gov.my/administrator/index.php",
+      "Status": "Waiting",
+      "Remark": "Joomla admin panel exposed - dorking scan 17/4/2026"
+    },
+    {
+      "No": "P1",
+      "Agency": "e-lesen.mbi.gov.my",
+      "ID": "",
+      "Release Date": "",
+      "Type": "PHP Info",
+      "IoC": "http://e-lesen.mbi.gov.my/info.php",
+      "Status": "Waiting",
+      "Remark": "PHPInfo page exposed - CRITICAL information disclosure"
+    },
+    {
+      "No": "P2",
+      "Agency": "e-sub.mpob.gov.my",
+      "ID": "",
+      "Release Date": "",
+      "Type": "PHP Info",
+      "IoC": "https://e-sub.mpob.gov.my/phpinfo.php",
+      "Status": "Waiting",
+      "Remark": "PHPInfo page exposed - CRITICAL information disclosure"
+    },
+    {
+      "No": "P3",
+      "Agency": "elatihan.johor.gov.my",
+      "ID": "",
+      "Release Date": "",
+      "Type": "PHP Info",
+      "IoC": "https://elatihan.johor.gov.my/info.php",
+      "Status": "Waiting",
+      "Remark": "PHPInfo page exposed - CRITICAL information disclosure"
+    },
+    {
+      "No": "P4",
+      "Agency": "epenjaja.mbsa.gov.my",
+      "ID": "",
+      "Release Date": "",
+      "Type": "PHP Info",
+      "IoC": "https://epenjaja.mbsa.gov.my/info.php",
+      "Status": "Waiting",
+      "Remark": "PHPInfo page exposed - CRITICAL information disclosure"
+    },
+    {
+      "No": "P5",
+      "Agency": "fpxptg.pahang.gov.my",
+      "ID": "",
+      "Release Date": "",
+      "Type": "PHP Info",
+      "IoC": "https://fpxptg.pahang.gov.my/info.php",
+      "Status": "Waiting",
+      "Remark": "PHPInfo page exposed - CRITICAL information disclosure"
+    },
+    {
+      "No": "P6",
+      "Agency": "gamma.malaysia.gov.my",
+      "ID": "",
+      "Release Date": "",
+      "Type": "PHP Info",
+      "IoC": "https://gamma.malaysia.gov.my/test.php",
+      "Status": "Waiting",
+      "Remark": "PHPInfo page exposed - CRITICAL information disclosure"
+    },
+    {
+      "No": "P7",
+      "Agency": "ipay.mpklang.gov.my",
+      "ID": "",
+      "Release Date": "",
+      "Type": "PHP Info",
+      "IoC": "https://ipay.mpklang.gov.my/phpinfo.php",
+      "Status": "Waiting",
+      "Remark": "PHPInfo page exposed - CRITICAL information disclosure"
+    },
+    {
+      "No": "P8",
+      "Agency": "kemas.gov.my",
+      "ID": "",
+      "Release Date": "",
+      "Type": "PHP Info",
+      "IoC": "https://kemas.gov.my/info.php",
+      "Status": "Waiting",
+      "Remark": "PHPInfo page exposed - CRITICAL information disclosure"
+    },
+    {
+      "No": "P9",
+      "Agency": "mdsb.gov.my",
+      "ID": "",
+      "Release Date": "",
+      "Type": "PHP Info",
+      "IoC": "https://mdsb.gov.my/phpinfo.php",
+      "Status": "Waiting",
+      "Remark": "PHPInfo page exposed - CRITICAL information disclosure"
+    },
+    {
+      "No": "P10",
+      "Agency": "mphs.gov.my",
+      "ID": "",
+      "Release Date": "",
+      "Type": "PHP Info",
+      "IoC": "https://mphs.gov.my/phpinfo.php",
+      "Status": "Waiting",
+      "Remark": "PHPInfo page exposed - CRITICAL information disclosure"
+    },
+    {
+      "No": "P11",
+      "Agency": "mycensus.gov.my",
+      "ID": "",
+      "Release Date": "",
+      "Type": "PHP Info",
+      "IoC": "https://mycensus.gov.my/info.php",
+      "Status": "Waiting",
+      "Remark": "PHPInfo page exposed - CRITICAL information disclosure"
+    },
+    {
+      "No": "P12",
+      "Agency": "mygenom.gov.my",
+      "ID": "",
+      "Release Date": "",
+      "Type": "PHP Info",
+      "IoC": "https://mygenom.gov.my/info.php",
+      "Status": "Waiting",
+      "Remark": "PHPInfo page exposed - CRITICAL information disclosure"
+    },
+    {
+      "No": "P13",
+      "Agency": "mygred.mbi.gov.my",
+      "ID": "",
+      "Release Date": "",
+      "Type": "PHP Info",
+      "IoC": "http://mygred.mbi.gov.my/test.php",
+      "Status": "Waiting",
+      "Remark": "PHPInfo page exposed - CRITICAL information disclosure"
+    },
+    {
+      "No": "P14",
+      "Agency": "portal.moh.gov.my",
+      "ID": "",
+      "Release Date": "",
+      "Type": "PHP Info",
+      "IoC": "https://portal.moh.gov.my/phpinfo.php",
+      "Status": "Waiting",
+      "Remark": "PHPInfo page exposed - CRITICAL information disclosure"
+    },
+    {
+      "No": "P15",
+      "Agency": "pustakailmu.arkib.gov.my",
+      "ID": "",
+      "Release Date": "",
+      "Type": "PHP Info",
+      "IoC": "https://pustakailmu.arkib.gov.my/phpinfo.php",
+      "Status": "Waiting",
+      "Remark": "PHPInfo page exposed - CRITICAL information disclosure"
+    },
+    {
+      "No": "P16",
+      "Agency": "sabah.jksm.gov.my",
+      "ID": "",
+      "Release Date": "",
+      "Type": "PHP Info",
+      "IoC": "https://sabah.jksm.gov.my/phpinfo.php",
+      "Status": "Waiting",
+      "Remark": "PHPInfo page exposed - CRITICAL information disclosure"
+    },
+    {
+      "No": "P17",
+      "Agency": "tender.selangor.gov.my",
+      "ID": "",
+      "Release Date": "",
+      "Type": "PHP Info",
+      "IoC": "http://tender.selangor.gov.my/phpinfo.php",
+      "Status": "Waiting",
+      "Remark": "PHPInfo page exposed - CRITICAL information disclosure"
+    },
+    {
+      "No": "M1",
+      "Agency": "dashboard.mosti.gov.my",
+      "ID": "",
+      "Release Date": "",
+      "Type": "phpMyAdmin",
+      "IoC": "https://dashboard.mosti.gov.my/phpMyAdmin",
+      "Status": "Waiting",
+      "Remark": "phpMyAdmin exposed - HIGH RISK database management interface"
+    },
+    {
+      "No": "M2",
+      "Agency": "eagroperikanan.dof.gov.my",
+      "ID": "",
+      "Release Date": "",
+      "Type": "phpMyAdmin",
+      "IoC": "http://eagroperikanan.dof.gov.my/phpmyadmin",
+      "Status": "Waiting",
+      "Remark": "phpMyAdmin exposed - HIGH RISK database management interface"
+    },
+    {
+      "No": "M3",
+      "Agency": "kanda.prison.gov.my",
+      "ID": "",
+      "Release Date": "",
+      "Type": "phpMyAdmin",
+      "IoC": "https://kanda.prison.gov.my/phpmyadmin",
+      "Status": "Waiting",
+      "Remark": "phpMyAdmin exposed - HIGH RISK database management interface"
+    },
+    {
+      "No": "M4",
+      "Agency": "mynorisk.mbi.gov.my",
+      "ID": "",
+      "Release Date": "",
+      "Type": "phpMyAdmin",
+      "IoC": "https://mynorisk.mbi.gov.my/phpmyadmin",
+      "Status": "Waiting",
+      "Remark": "phpMyAdmin exposed - HIGH RISK database management interface"
+    },
+    {
+      "No": "W1",
+      "Agency": "library.agc.gov.my",
+      "ID": "",
+      "Release Date": "",
+      "Type": "Admin Login",
+      "IoC": "https://library.agc.gov.my/wp-login.php",
+      "Status": "Waiting",
+      "Remark": "WordPress wp-login.php exposed - dorking scan 17/4/2026"
+    },
+    {
+      "No": "W2",
+      "Agency": "jeraigeopark.kedah.gov.my",
+      "ID": "",
+      "Release Date": "",
+      "Type": "Admin Login",
+      "IoC": "https://jeraigeopark.kedah.gov.my/wp-login.php",
+      "Status": "Waiting",
+      "Remark": "WordPress wp-login.php exposed - dorking scan 17/4/2026"
+    },
+    {
+      "No": "W3",
+      "Agency": "jurnal.aadk.gov.my",
+      "ID": "",
+      "Release Date": "",
+      "Type": "Admin Login",
+      "IoC": "https://jurnal.aadk.gov.my/wp-login.php",
+      "Status": "Waiting",
+      "Remark": "WordPress wp-login.php exposed - dorking scan 17/4/2026"
+    },
+    {
+      "No": "W4",
+      "Agency": "mastic.mosti.gov.my",
+      "ID": "",
+      "Release Date": "",
+      "Type": "Admin Login",
+      "IoC": "https://mastic.mosti.gov.my/wp-login.php",
+      "Status": "Waiting",
+      "Remark": "WordPress wp-login.php exposed - dorking scan 17/4/2026"
+    },
+    {
+      "No": "W5",
+      "Agency": "msn.sabah.gov.my",
+      "ID": "",
+      "Release Date": "",
+      "Type": "Admin Login",
+      "IoC": "https://msn.sabah.gov.my/wp-login.php",
+      "Status": "Waiting",
+      "Remark": "WordPress wp-login.php exposed - dorking scan 17/4/2026"
+    },
+    {
+      "No": "W6",
+      "Agency": "bpen.johor.gov.my",
+      "ID": "",
+      "Release Date": "",
+      "Type": "Admin Login",
+      "IoC": "http://bpen.johor.gov.my/wp-login.php",
+      "Status": "Waiting",
+      "Remark": "WordPress wp-login.php exposed - dorking scan 17/4/2026"
+    },
+    {
+      "No": "W7",
+      "Agency": "dewannegeri.johor.gov.my",
+      "ID": "",
+      "Release Date": "",
+      "Type": "Admin Login",
+      "IoC": "https://dewannegeri.johor.gov.my/wp-login.php",
+      "Status": "Waiting",
+      "Remark": "WordPress wp-login.php exposed - dorking scan 17/4/2026"
+    },
+    {
+      "No": "W8",
+      "Agency": "forest.sabah.gov.my",
+      "ID": "",
+      "Release Date": "",
+      "Type": "Admin Login",
+      "IoC": "https://forest.sabah.gov.my/wp-login.php",
+      "Status": "Waiting",
+      "Remark": "WordPress wp-login.php exposed - dorking scan 17/4/2026"
+    },
+    {
+      "No": "W9",
+      "Agency": "jkr.sabah.gov.my",
+      "ID": "",
+      "Release Date": "",
+      "Type": "Admin Login",
+      "IoC": "https://jkr.sabah.gov.my/wp-login.php",
+      "Status": "Waiting",
+      "Remark": "WordPress wp-login.php exposed - dorking scan 17/4/2026"
+    },
+    {
+      "No": "W10",
+      "Agency": "jopr.mpob.gov.my",
+      "ID": "",
+      "Release Date": "",
+      "Type": "Admin Login",
+      "IoC": "https://jopr.mpob.gov.my/wp-login.php",
+      "Status": "Waiting",
+      "Remark": "WordPress wp-login.php exposed - dorking scan 17/4/2026"
+    },
+    {
+      "No": "W11",
+      "Agency": "kplb.sabah.gov.my",
+      "ID": "",
+      "Release Date": "",
+      "Type": "Admin Login",
+      "IoC": "https://kplb.sabah.gov.my/wp-login.php",
+      "Status": "Waiting",
+      "Remark": "WordPress wp-login.php exposed - dorking scan 17/4/2026"
+    },
+    {
+      "No": "W12",
+      "Agency": "mpob.gov.my",
+      "ID": "",
+      "Release Date": "",
+      "Type": "Admin Login",
+      "IoC": "https://mpob.gov.my/wp-login.php",
+      "Status": "Waiting",
+      "Remark": "WordPress wp-login.php exposed - dorking scan 17/4/2026"
+    },
+    {
+      "No": "W13",
+      "Agency": "opiej.mpob.gov.my",
+      "ID": "",
+      "Release Date": "",
+      "Type": "Admin Login",
+      "IoC": "https://opiej.mpob.gov.my/wp-login.php",
+      "Status": "Waiting",
+      "Remark": "WordPress wp-login.php exposed - dorking scan 17/4/2026"
+    },
+    {
+      "No": "W14",
+      "Agency": "palmoilis.mpob.gov.my",
+      "ID": "",
+      "Release Date": "",
+      "Type": "Admin Login",
+      "IoC": "https://palmoilis.mpob.gov.my/wp-login.php",
+      "Status": "Waiting",
+      "Remark": "WordPress wp-login.php exposed - dorking scan 17/4/2026"
+    },
+    {
+      "No": "W15",
+      "Agency": "palmoilpedia.mpob.gov.my",
+      "ID": "",
+      "Release Date": "",
+      "Type": "Admin Login",
+      "IoC": "http://palmoilpedia.mpob.gov.my/wp-login.php",
+      "Status": "Waiting",
+      "Remark": "WordPress wp-login.php exposed - dorking scan 17/4/2026"
+    },
+    {
+      "No": "W16",
+      "Agency": "tot.mpob.gov.my",
+      "ID": "",
+      "Release Date": "",
+      "Type": "Admin Login",
+      "IoC": "http://tot.mpob.gov.my/wp-login.php",
+      "Status": "Waiting",
+      "Remark": "WordPress wp-login.php exposed - dorking scan 17/4/2026"
+    },
+    {
+      "No": "W17",
+      "Agency": "jkt.kpkt.gov.my",
+      "ID": "",
+      "Release Date": "",
+      "Type": "Admin Login",
+      "IoC": "https://jkt.kpkt.gov.my/wp-login.php",
+      "Status": "Waiting",
+      "Remark": "WordPress wp-login.php exposed - dorking scan 17/4/2026"
+    },
+    {
+      "No": "W18",
+      "Agency": "kemahkotaan.johor.gov.my",
+      "ID": "",
+      "Release Date": "",
+      "Type": "Admin Login",
+      "IoC": "https://kemahkotaan.johor.gov.my/wp-login.php",
+      "Status": "Waiting",
+      "Remark": "WordPress wp-login.php exposed - dorking scan 17/4/2026"
+    },
+    {
+      "No": "W19",
+      "Agency": "epenjaja.mbsa.gov.my",
+      "ID": "",
+      "Release Date": "",
+      "Type": "Admin Login",
+      "IoC": "https://epenjaja.mbsa.gov.my/wp-login.php",
+      "Status": "Waiting",
+      "Remark": "WordPress wp-login.php exposed - dorking scan 17/4/2026"
+    },
+    {
+      "No": "W20",
+      "Agency": "bless.gov.my",
+      "ID": "",
+      "Release Date": "",
+      "Type": "Admin Login",
+      "IoC": "https://bless.gov.my/wp-login.php",
+      "Status": "Waiting",
+      "Remark": "WordPress wp-login.php exposed - dorking scan 17/4/2026"
+    },
+    {
+      "No": "W21",
+      "Agency": "johor.gov.my",
+      "ID": "",
+      "Release Date": "",
+      "Type": "Admin Login",
+      "IoC": "https://johor.gov.my/wp-login.php",
+      "Status": "Waiting",
+      "Remark": "WordPress wp-login.php exposed - dorking scan 17/4/2026"
+    },
+    {
+      "No": "W22",
+      "Agency": "rtwsocso.perkeso.gov.my",
+      "ID": "",
+      "Release Date": "",
+      "Type": "Admin Login",
+      "IoC": "https://rtwsocso.perkeso.gov.my/wp-login.php",
+      "Status": "Waiting",
+      "Remark": "WordPress wp-login.php exposed - dorking scan 17/4/2026"
+    },
+    {
+      "No": "W23",
+      "Agency": "gajiminimum.mohr.gov.my",
+      "ID": "",
+      "Release Date": "",
+      "Type": "Admin Login",
+      "IoC": "https://gajiminimum.mohr.gov.my/wp-login.php",
+      "Status": "Waiting",
+      "Remark": "WordPress wp-login.php exposed - dorking scan 17/4/2026"
+    },
+    {
+      "No": "W24",
+      "Agency": "sdb.mosti.gov.my",
+      "ID": "",
+      "Release Date": "",
+      "Type": "Admin Login",
+      "IoC": "https://sdb.mosti.gov.my/wp-login.php",
+      "Status": "Waiting",
+      "Remark": "WordPress wp-login.php exposed - dorking scan 17/4/2026"
+    }
+  ]
+}

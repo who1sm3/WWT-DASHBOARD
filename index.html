@@ -1,0 +1,330 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="robots" content="noindex, nofollow, noarchive, nosnippet, noimageindex">
+    <meta name="googlebot" content="noindex, nofollow">
+    <meta http-equiv="X-Content-Type-Options" content="nosniff">
+    <meta http-equiv="X-Frame-Options" content="DENY">
+    <title>WWT Alert Management — Security Operations Center</title>
+    <meta name="description" content="WWT Alert Management - SOC vulnerability tracking dashboard">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="icon" type="image/png" href="logo.png">
+    <link rel="stylesheet" href="style.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+</head>
+<body>
+    <!-- Authorization Splash Screen -->
+    <div class="splash-screen" id="splashScreen">
+        <div class="splash-particles" id="splashParticles"></div>
+        <div class="splash-content">
+            <div class="splash-logo">
+                <img src="logo.png" alt="WWT" width="48" height="48">
+                <span>WWT Alert Management</span>
+            </div>
+            <div class="palm-container" id="palmContainer">
+                <img src="palm.png" alt="Biometric Scan" class="palm-image" id="palmImage">
+                <div class="scan-line" id="scanLine"></div>
+                <div class="scan-corners">
+                    <span class="corner tl"></span><span class="corner tr"></span>
+                    <span class="corner bl"></span><span class="corner br"></span>
+                </div>
+                <div class="scan-overlay" id="scanOverlay"></div>
+            </div>
+            <p class="splash-subtitle" id="splashSubtitle">Biometric Identity Verification</p>
+            <button class="auth-btn" id="authBtn">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0110 0v4"/></svg>
+                <span>Authorize</span>
+            </button>
+            <div class="access-granted" id="accessGranted">
+                <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 11.08V12a10 10 0 11-5.93-9.14"/><path d="M22 4L12 14.01l-3-3"/></svg>
+                <span>ACCESS GRANTED</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Dashboard (hidden until authorized) -->
+    <div class="dashboard-wrap" id="dashboardWrap" style="display:none">
+
+    <!-- Sidebar Navigation -->
+    <aside class="sidebar" id="sidebar">
+        <div class="sidebar-logo">
+            <img src="logo.png" alt="WWT SOC Logo" width="34" height="34">
+            <div class="sidebar-logo-text">
+                <strong>WWT SOC</strong>
+                <span>Alert Management</span>
+            </div>
+        </div>
+        <nav class="sidebar-nav" role="navigation" aria-label="Main">
+            <button class="nav-item active" data-view="dashboard">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="9" rx="1"/><rect x="14" y="3" width="7" height="5" rx="1"/><rect x="14" y="12" width="7" height="9" rx="1"/><rect x="3" y="16" width="7" height="5" rx="1"/></svg>
+                <span>Dashboard</span>
+            </button>
+            <button class="nav-item" data-view="alerts">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8A6 6 0 006 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 01-3.46 0"/></svg>
+                <span>Alerts</span>
+                <span class="nav-badge" id="navAlertCount">0</span>
+            </button>
+            <button class="nav-item" data-view="analytics">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 20V10M12 20V4M6 20v-6"/></svg>
+                <span>Analytics</span>
+            </button>
+        </nav>
+        <div class="sidebar-foot">
+            <div class="status-indicator"><span class="pulse-dot"></span> Live</div>
+            <span class="sidebar-version">v4.0</span>
+        </div>
+    </aside>
+
+    <!-- Main -->
+    <main class="main-area">
+        <!-- Top Bar -->
+        <header class="top-bar" role="banner">
+            <button class="sidebar-toggle" id="sidebarToggle" aria-label="Toggle menu">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 12h18M3 6h18M3 18h18"/></svg>
+            </button>
+            <div class="page-title-wrap">
+                <h1 id="pageTitle">Dashboard</h1>
+                <span class="page-sub" id="pageSub">Overview of all security alerts</span>
+            </div>
+            <div class="top-bar-actions">
+                <button class="btn btn-primary" id="addNewBtn" title="Add New Alert">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14M5 12h14"/></svg>
+                    <span>New Alert</span>
+                </button>
+                <button class="btn btn-outline" id="exportBtn" title="Export Data">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4M7 10l5 5 5-5M12 15V3"/></svg>
+                    <span>Export</span>
+                </button>
+                <button class="btn btn-outline" id="importBtn" title="Import Data">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4M17 8l-5-5-5 5M12 3v12"/></svg>
+                    <span>Import</span>
+                </button>
+                <input type="file" id="importFile" accept=".json" style="display:none">
+            </div>
+        </header>
+
+    <!-- Dashboard View -->
+    <section class="view view-active" id="viewDashboard" aria-label="Dashboard">
+        <div class="stats-grid">
+            <div class="stat-card stat-total" id="statTotal">
+                <div class="stat-icon-wrap"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><path d="M14 2v6h6M16 13H8M16 17H8M10 9H8"/></svg></div>
+                <div class="stat-info"><span class="stat-value">0</span><span class="stat-label">Total</span></div>
+            </div>
+            <div class="stat-card stat-open" id="statOpen">
+                <div class="stat-icon-wrap"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 8v4M12 16h.01"/></svg></div>
+                <div class="stat-info"><span class="stat-value">0</span><span class="stat-label">Open</span></div>
+            </div>
+            <div class="stat-card stat-waiting-card" id="statWaiting">
+                <div class="stat-icon-wrap"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg></div>
+                <div class="stat-info"><span class="stat-value">0</span><span class="stat-label">Waiting</span></div>
+            </div>
+            <div class="stat-card stat-ctm-card" id="statCTM">
+                <div class="stat-icon-wrap"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg></div>
+                <div class="stat-info"><span class="stat-value">0</span><span class="stat-label">CTM</span></div>
+            </div>
+            <div class="stat-card stat-closed-card" id="statClosed">
+                <div class="stat-icon-wrap"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 11.08V12a10 10 0 11-5.93-9.14"/><path d="M22 4L12 14.01l-3-3"/></svg></div>
+                <div class="stat-info"><span class="stat-value">0</span><span class="stat-label">Closed</span></div>
+            </div>
+            <div class="stat-card stat-progress-card" id="statProgress">
+                <div class="stat-icon-wrap"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg></div>
+                <div class="stat-info"><span class="stat-value">0%</span><span class="stat-label">Resolved</span></div>
+                <div class="progress-bar-mini"><div class="progress-fill-mini" id="progressFill"></div></div>
+            </div>
+        </div>
+
+        <div class="charts-row">
+            <div class="chart-card">
+                <div class="chart-head"><h3>Status Distribution</h3><span class="chart-sub">Breakdown of all alerts</span></div>
+                <div class="chart-wrap"><canvas id="chartStatus"></canvas></div>
+            </div>
+            <div class="chart-card">
+                <div class="chart-head"><h3>Alerts by Type</h3><span class="chart-sub">Top vulnerability categories</span></div>
+                <div class="chart-wrap"><canvas id="chartType"></canvas></div>
+            </div>
+        </div>
+
+        <div class="panel">
+            <div class="panel-head">
+                <div><h3>Recent Alerts</h3><span class="chart-sub">Latest 6 records</span></div>
+                <button class="link-btn" data-view="alerts">View all →</button>
+            </div>
+            <div class="recent-list" id="recentAlerts"></div>
+        </div>
+    </section>
+
+    <!-- Alerts View -->
+    <section class="view" id="viewAlerts" aria-label="Alerts">
+    <section class="controls-section" aria-label="Filters">
+        <div class="controls-bar">
+            <div class="search-box">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg>
+                <input type="text" id="searchInput" placeholder="Search alerts..." autocomplete="off">
+                <kbd>Ctrl+K</kbd>
+            </div>
+            <div class="filter-group" role="radiogroup" aria-label="Status filter">
+                <button class="filter-btn active" data-filter="all">All</button>
+                <button class="filter-btn" data-filter="open"><span class="filter-dot open"></span>Open</button>
+                <button class="filter-btn" data-filter="waiting"><span class="filter-dot waiting"></span>Waiting</button>
+                <button class="filter-btn" data-filter="ctm"><span class="filter-dot ctm"></span>CTM</button>
+                <button class="filter-btn" data-filter="closed"><span class="filter-dot closed"></span>Closed</button>
+            </div>
+            <div class="select-wrap">
+                <select id="typeFilter" aria-label="Filter by type">
+                    <option value="all">All Types</option>
+                    <option value="Admin Login">Admin Login</option>
+                    <option value="PHP Info">PHP Info</option>
+                    <option value="PHP Error">PHP Error</option>
+                    <option value="Index List">Index List</option>
+                    <option value="Vulnerability">Vulnerability</option>
+                    <option value="Exposed Data">Exposed Data</option>
+                    <option value="Exposed Git Repo">Exposed Git Repo</option>
+                    <option value="Debug Bar">Debug Bar</option>
+                    <option value="IDOR">IDOR</option>
+                    <option value="Apache Tomcat">Apache Tomcat</option>
+                    <option value="WinDev/WebDev Error">WinDev/WebDev Error</option>
+                    <option value="phpMyAdmin">phpMyAdmin</option>
+                </select>
+            </div>
+            <div class="select-wrap">
+                <select id="sortFilter" aria-label="Sort by">
+                    <option value="no">Sort: No.</option>
+                    <option value="agency">Sort: Agency</option>
+                    <option value="status">Sort: Status</option>
+                    <option value="type">Sort: Type</option>
+                    <option value="date">Sort: Date</option>
+                </select>
+            </div>
+        </div>
+    </section>
+
+    <!-- Results Table -->
+    <section class="results-section" aria-label="Alert results">
+        <div class="table-container">
+            <div class="table-scroll">
+                <table class="results-table" role="grid">
+                    <thead>
+                        <tr>
+                            <th class="th-check"><label class="custom-checkbox"><input type="checkbox" id="selectAll"><span class="checkmark"></span></label></th>
+                            <th class="th-no">No.</th>
+                            <th class="th-agency">Agency</th>
+                            <th class="th-id">Incident ID</th>
+                            <th class="th-date">Date</th>
+                            <th class="th-type">Type</th>
+                            <th class="th-ioc">IoC</th>
+                            <th class="th-status">Status</th>
+                            <th class="th-remark">Remark</th>
+                            <th class="th-actions">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="resultsBody"></tbody>
+                </table>
+            </div>
+        </div>
+        <div class="table-footer">
+            <span class="showing-info" id="showingInfo">Loading...</span>
+            <div class="bulk-actions" id="bulkActions" style="display:none">
+                <span id="selectedCount">0 selected</span>
+                <button class="btn btn-sm status-action-open" id="bulkMarkOpen">Open</button>
+                <button class="btn btn-sm status-action-waiting" id="bulkMarkWaiting">Waiting</button>
+                <button class="btn btn-sm status-action-ctm" id="bulkMarkCTM">CTM</button>
+                <button class="btn btn-sm status-action-closed" id="bulkMarkClosed">Closed</button>
+                <button class="btn btn-sm btn-danger" id="bulkDelete">Delete</button>
+            </div>
+        </div>
+    </section>
+    </section><!-- /viewAlerts -->
+
+    <!-- Analytics View -->
+    <section class="view" id="viewAnalytics" aria-label="Analytics">
+        <div class="charts-row">
+            <div class="chart-card">
+                <div class="chart-head"><h3>Top Agencies</h3><span class="chart-sub">Most frequently affected</span></div>
+                <div class="chart-wrap tall"><canvas id="chartAgencies"></canvas></div>
+            </div>
+            <div class="chart-card">
+                <div class="chart-head"><h3>Resolution Progress</h3><span class="chart-sub">Closed vs remaining</span></div>
+                <div class="chart-wrap tall"><canvas id="chartProgress"></canvas></div>
+            </div>
+        </div>
+        <div class="charts-row">
+            <div class="chart-card full">
+                <div class="chart-head"><h3>Status by Type</h3><span class="chart-sub">How each category is progressing</span></div>
+                <div class="chart-wrap tall"><canvas id="chartStacked"></canvas></div>
+            </div>
+        </div>
+    </section>
+
+    </main><!-- /main-area -->
+
+    <!-- Add Modal -->
+    <div class="modal-overlay" id="addModal">
+        <div class="modal">
+            <div class="modal-header"><h2><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14M5 12h14"/></svg>New Alert</h2><button class="modal-close" id="closeModal">&times;</button></div>
+            <div class="modal-body">
+                <div class="form-group"><label>Agency <span class="required">*</span></label><input type="text" id="newAgency" placeholder="Enter agency name"></div>
+                <div class="form-row">
+                    <div class="form-group"><label>Incident ID</label><input type="text" id="newIncidentId" placeholder="INC:XXXXXXXX-XXXXXX"></div>
+                    <div class="form-group"><label>Release Date</label><input type="date" id="newReleaseDate"></div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group"><label>Type <span class="required">*</span></label><select id="newType"><option value="" disabled selected>Select type...</option><option>Admin Login</option><option>PHP Info</option><option>PHP Error</option><option>Index List</option><option>Vulnerability</option><option>Exposed Data</option><option>Exposed Git Repo</option><option>Debug Bar</option><option>IDOR</option><option>Apache Tomcat</option><option>phpMyAdmin</option><option>WinDev/WebDev Error</option></select></div>
+                    <div class="form-group"><label>Status <span class="required">*</span></label><select id="newAlertStatus"><option value="" disabled selected>Select status...</option><option>Open</option><option>Waiting</option><option>CTM</option><option>Closed</option></select></div>
+                </div>
+                <div class="form-group"><label>IoC <span class="hint">(one per line for multiple)</span></label><textarea id="newIoC" placeholder="URL or indicator — one per line" rows="3"></textarea></div>
+                <div class="form-group"><label>Remark</label><textarea id="newRemark" placeholder="Notes..."></textarea></div>
+            </div>
+            <div class="modal-footer"><button class="btn btn-outline" id="cancelModal">Cancel</button><button class="btn btn-primary" id="saveNewBtn">Save Alert</button></div>
+        </div>
+    </div>
+
+    <!-- Edit Modal -->
+    <div class="modal-overlay" id="editModal">
+        <div class="modal">
+            <div class="modal-header"><h2><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>Edit Alert</h2><button class="modal-close" id="closeEditModal">&times;</button></div>
+            <div class="modal-body">
+                <div class="form-group"><label>Agency <span class="required">*</span></label><input type="text" id="editAgency"></div>
+                <div class="form-row">
+                    <div class="form-group"><label>Incident ID</label><input type="text" id="editIncidentId"></div>
+                    <div class="form-group"><label>Release Date</label><input type="date" id="editReleaseDate"></div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group"><label>Type</label><select id="editType"><option>Admin Login</option><option>PHP Info</option><option>PHP Error</option><option>Index List</option><option>Vulnerability</option><option>Exposed Data</option><option>Exposed Git Repo</option><option>Debug Bar</option><option>IDOR</option><option>Apache Tomcat</option><option>phpMyAdmin</option><option>WinDev/WebDev Error</option></select></div>
+                    <div class="form-group"><label>Status</label><select id="editAlertStatus"><option>Open</option><option>Waiting</option><option>CTM</option><option>Closed</option></select></div>
+                </div>
+                <div class="form-group"><label>IoC <span class="hint">(one per line for multiple)</span></label><textarea id="editIoC" rows="3"></textarea></div>
+                <div class="form-group"><label>Remark</label><textarea id="editRemark"></textarea></div>
+            </div>
+            <div class="modal-footer"><button class="btn btn-outline" id="cancelEditModal">Cancel</button><button class="btn btn-primary" id="saveEditBtn">Update Alert</button></div>
+        </div>
+    </div>
+
+    <!-- Delete Modal -->
+    <div class="modal-overlay" id="deleteModal">
+        <div class="modal modal-sm">
+            <div class="modal-header modal-header-danger"><h2><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 6h18M19 6v14a2 2 0 01-2 2H7a2 2 0 01-2-2V6m3 0V4a2 2 0 012-2h4a2 2 0 012 2v2"/></svg>Confirm Delete</h2><button class="modal-close" id="closeDeleteModal">&times;</button></div>
+            <div class="modal-body"><p class="delete-warning">This action cannot be undone. Are you sure?</p><div class="delete-count" id="deleteCount">1 alert will be deleted</div></div>
+            <div class="modal-footer"><button class="btn btn-outline" id="cancelDeleteModal">Cancel</button><button class="btn btn-danger" id="confirmDeleteBtn">Delete</button></div>
+        </div>
+    </div>
+
+    <!-- Detail Panel -->
+    <div class="detail-overlay" id="detailOverlay">
+        <div class="detail-panel">
+            <div class="detail-header"><h3>Alert Details</h3><button class="modal-close" id="closeDetail">&times;</button></div>
+            <div class="detail-body" id="detailBody"></div>
+        </div>
+    </div>
+
+    <!-- Toast Container -->
+    <div class="toast-container" id="toastContainer" aria-live="polite"></div>
+
+    </div><!-- end dashboard-wrap -->
+
+    <script src="app.js"></script>
+</body>
+</html>
