@@ -21,9 +21,11 @@ Then other PCs on the LAN open:
     http://<this-pc-ip>:3000
 """
 
+import datetime
 import json
 import mimetypes
 import os
+import random
 import socket
 import sqlite3
 import sys
@@ -34,6 +36,10 @@ DB_FILE    = os.path.join(ROOT, "server_data.db")
 DORK_DB    = os.path.join(ROOT, "dorking_data.db")
 JSON_FILE  = os.path.join(ROOT, "server_data.json")   # legacy, used once for migration
 PORT       = int(sys.argv[1]) if len(sys.argv) > 1 else 3000
+
+# Ticket ID generator — matches Code.py's path & line format exactly.
+TICKET_DIR  = os.path.join(os.path.expanduser("~"), "Documents", "Generated Code")
+TICKET_FILE = os.path.join(TICKET_DIR, "generated_codes.txt")
 
 mimetypes.add_type("application/javascript", ".js")
 mimetypes.add_type("image/svg+xml",          ".svg")
@@ -278,16 +284,22 @@ def safe_static_path(url_path):
     rel = "/index.html" if url_path in ("", "/") else url_path
     rel = rel.split("?", 1)[0].split("#", 1)[0]
     candidate = os.path.normpath(os.path.join(ROOT, rel.lstrip("/\\")))
-    if not candidate.startswith(ROOT):
+    # Proper containment check: candidate must equal ROOT or live under ROOT + sep.
+    # Prevents "/proj" matching "/proj-other/..." via startswith().
+    root_with_sep = ROOT + os.sep
+    if candidate != ROOT and not candidate.startswith(root_with_sep):
         return None
     return candidate
 
 
-# Filenames that must never be served over the static route.
+# Filenames / patterns that must never be served over the static route.
+# Compared case-insensitively so Windows' case-insensitive FS can't bypass.
 _BLOCKED_STATIC = {
     "server_data.db", "server_data.db-wal", "server_data.db-shm", "server_data.json",
     "dorking_data.db", "dorking_data.db-wal", "dorking_data.db-shm",
 }
+# Source files and dotfiles must never leak over the static route.
+_BLOCKED_EXTENSIONS = {".py", ".pyc", ".pyo", ".db", ".sqlite", ".sqlite3", ".env", ".ini"}
 
 
 class Handler(BaseHTTPRequestHandler):
@@ -319,6 +331,8 @@ class Handler(BaseHTTPRequestHandler):
             self._send_json(200, read_data()); return
         if route == "/api/dorks":
             self._send_json(200, read_dorks()); return
+        if route == "/api/tickets":
+            self._send_json(200, _ticket_history(limit=20)); return
 
         # Browsers auto-request these — serve/ignore silently instead of logging 404s.
         if route == "/favicon.ico":
@@ -343,6 +357,32 @@ class Handler(BaseHTTPRequestHandler):
             self.send_response(204); self.end_headers(); return
 
         self._serve_static()
+
+    def do_POST(self):
+        route = self.path.split("?", 1)[0]
+        if route != "/api/tickets":
+            self.send_error(404); return
+
+        length = int(self.headers.get("Content-Length") or 0)
+        if length < 0 or length > 64 * 1024:
+            self.send_error(413, "Payload too large"); return
+
+        raw = self.rfile.read(length) if length else b"{}"
+        try:
+            body = json.loads(raw.decode("utf-8") or "{}")
+            if not isinstance(body, dict):
+                raise ValueError("Body must be a JSON object")
+            prefix = body.get("prefix", "INC:")
+            date_str = body.get("date", "")
+            if not isinstance(prefix, str) or len(prefix) > 32:
+                raise ValueError("Invalid prefix")
+            if not isinstance(date_str, str) or len(date_str) > 32:
+                raise ValueError("Invalid date")
+        except Exception as e:
+            self._send_json(400, {"ok": False, "error": str(e)}); return
+
+        result = generate_ticket(prefix, date_str)
+        self._send_json(200 if result.get("ok") else 500, result)
 
     def do_PUT(self):
         route = self.path.split("?", 1)[0]
@@ -373,8 +413,14 @@ class Handler(BaseHTTPRequestHandler):
         if path is None:
             self.send_error(403); return
 
-        # Never expose the database or the legacy JSON over the static route
-        if os.path.basename(path) in _BLOCKED_STATIC:
+        base_lower = os.path.basename(path).lower()
+        ext_lower = os.path.splitext(base_lower)[1]
+
+        # Never expose the database/legacy JSON, source files, or dotfiles.
+        if (base_lower in _BLOCKED_STATIC
+                or ext_lower in _BLOCKED_EXTENSIONS
+                or base_lower.startswith(".")
+                or "__pycache__" in path.lower().split(os.sep)):
             self.send_error(403); return
 
         if not os.path.isfile(path):
@@ -391,9 +437,98 @@ class Handler(BaseHTTPRequestHandler):
         self.send_header("Content-Type", ctype)
         self.send_header("Content-Length", str(len(data)))
         self.send_header("Cache-Control", "no-cache")
+        # Security headers — X-Frame-Options only works as an HTTP header,
+        # not via <meta http-equiv>, so the site is actually clickjack-protected now.
+        self.send_header("X-Frame-Options", "DENY")
+        self.send_header("X-Content-Type-Options", "nosniff")
+        self.send_header("Referrer-Policy", "no-referrer")
         self._cors()
         self.end_headers()
         self.wfile.write(data)
+
+
+## -- Ticket ID Generator (ported from Code.py, same algorithm & file format) --
+
+def _ticket_generate_mix_code():
+    vowels     = 'AEIOU'
+    consonants = 'BCDFGHJKLMNPQRSTVWXYZ'
+    digits     = '0123456789'
+    return (
+        random.choice(consonants) +
+        random.choice(vowels) +
+        random.choice(consonants) +
+        random.choice(digits) +
+        random.choice(vowels) +
+        random.choice(consonants)
+    )
+
+
+def _ticket_existing_codes():
+    if not os.path.exists(TICKET_FILE):
+        return set()
+    codes = set()
+    try:
+        with open(TICKET_FILE, "r", encoding="utf-8") as f:
+            for line in f:
+                parts = line.strip().split()
+                if parts:
+                    codes.add(parts[-1])
+    except OSError:
+        pass
+    return codes
+
+
+def _ticket_save_code(full_code):
+    os.makedirs(TICKET_DIR, exist_ok=True)
+    now = datetime.datetime.now()
+    timestamp = now.strftime("[%Y-%m-%d][%H:%M:%S]")
+    with open(TICKET_FILE, "a", encoding="utf-8") as f:
+        f.write(f"{timestamp} {full_code}\n")
+    return timestamp
+
+
+def _ticket_history(limit=20):
+    if not os.path.exists(TICKET_FILE):
+        return []
+    out = []
+    try:
+        with open(TICKET_FILE, "r", encoding="utf-8") as f:
+            lines = f.readlines()
+    except OSError:
+        return []
+    for line in lines[-limit:][::-1]:
+        s = line.strip()
+        if not s:
+            continue
+        parts = s.split()
+        if len(parts) >= 2:
+            out.append({"timestamp": " ".join(parts[:-1]), "code": parts[-1]})
+    return out
+
+
+def generate_ticket(prefix, date_str):
+    prefix = "INC:" if prefix is None else str(prefix)
+    date_str = "" if date_str is None else str(date_str).strip()
+    if not date_str:
+        date_str = datetime.date.today().strftime("%Y%m%d")
+
+    existing = _ticket_existing_codes()
+    for attempt in range(1, 1001):
+        code = _ticket_generate_mix_code()
+        full_code = f"{prefix}{date_str}-{code}"
+        if full_code not in existing:
+            timestamp = _ticket_save_code(full_code)
+            return {
+                "ok": True,
+                "full_code": full_code,
+                "code": code,
+                "prefix": prefix,
+                "date": date_str,
+                "timestamp": timestamp,
+                "attempts": attempt,
+                "saved_to": TICKET_FILE,
+            }
+    return {"ok": False, "error": "Failed to generate a unique code after 1000 attempts. Please try again."}
 
 
 def lan_ips():
@@ -419,6 +554,7 @@ def main():
     print(f"  AlertTracker server running on port {PORT}")
     print(f"  Alerts DB:  {DB_FILE}")
     print(f"  Dorks DB:   {DORK_DB}")
+    print(f"  Tickets:    {TICKET_FILE}")
     print()
     print("  Open on this PC:")
     print(f"    http://localhost:{PORT}")

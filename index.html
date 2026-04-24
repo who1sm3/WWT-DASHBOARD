@@ -28,7 +28,7 @@
         <div class="intro-content" id="introContent">
             <div class="intro-logo-wrap">
                 <div class="intro-logo-glow"></div>
-                <img src="logo-nc4.png" alt="WWT" class="intro-logo" id="introLogo"
+                <img src="scuba-scuba-cat.gif" alt="WWT" class="intro-logo" id="introLogo"
                      onerror="this.onerror=null;this.src='logo.png';">
             </div>
 
@@ -82,6 +82,10 @@
                 <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/><path d="M8 11h6M11 8v6"/></svg>
                 <span>Dorking</span>
                 <span class="nav-badge" id="navDorkCount">0</span>
+            </button>
+            <button class="nav-item" data-view="ticket">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 9a3 3 0 003 3v0a3 3 0 00-3 3v2a2 2 0 002 2h16a2 2 0 002-2v-2a3 3 0 00-3-3v0a3 3 0 003-3V7a2 2 0 00-2-2H4a2 2 0 00-2 2z"/><path d="M13 5v2M13 11v2M13 17v2"/></svg>
+                <span>Ticket Generator</span>
             </button>
         </nav>
         <div class="sidebar-foot">
@@ -319,6 +323,81 @@
         <div id="dorkGroups" class="dork-groups"></div>
     </section>
 
+    <!-- Ticket Generator View (native) -->
+    <section class="view" id="viewTicket" aria-label="Ticket Generator">
+        <div class="ticket-layout">
+
+            <div class="ticket-panel ticket-form-panel">
+                <div class="ticket-panel-head">
+                    <div class="ticket-panel-icon">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 9a3 3 0 003 3v0a3 3 0 00-3 3v2a2 2 0 002 2h16a2 2 0 002-2v-2a3 3 0 00-3-3v0a3 3 0 003-3V7a2 2 0 00-2-2H4a2 2 0 00-2 2z"/><path d="M13 5v2M13 11v2M13 17v2"/></svg>
+                    </div>
+                    <div>
+                        <h3>Ticket ID Generator</h3>
+                        <span class="chart-sub">Create unique incident IDs in the format <code>INC:YYYYMMDD-XXXXXX</code></span>
+                    </div>
+                </div>
+
+                <form class="ticket-form" id="ticketForm" autocomplete="off">
+                    <div class="form-group">
+                        <label for="ticketPrefix">Prefix</label>
+                        <input type="text" id="ticketPrefix" value="INC:" maxlength="32" spellcheck="false">
+                    </div>
+                    <div class="form-group">
+                        <label for="ticketDate">Date <span class="hint">(YYYYMMDD — leave empty for today)</span></label>
+                        <input type="text" id="ticketDate" placeholder="e.g. 20260424" maxlength="12" inputmode="numeric" spellcheck="false">
+                    </div>
+                    <button type="submit" class="btn btn-primary ticket-generate-btn" id="ticketGenerateBtn">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>
+                        <span>Generate Code</span>
+                    </button>
+                </form>
+
+                <div class="ticket-result" id="ticketResult" hidden>
+                    <div class="ticket-result-label">✅ New Code</div>
+                    <div class="ticket-result-code" id="ticketResultCode">—</div>
+                    <div class="ticket-result-actions">
+                        <button class="btn btn-outline btn-sm" id="ticketCopyBtn" type="button">
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg>
+                            <span>Copy</span>
+                        </button>
+                        <span class="ticket-result-meta" id="ticketResultMeta"></span>
+                    </div>
+                </div>
+
+                <p class="ticket-saved-note">
+                    📂 Codes are saved to
+                    <code>Documents/Generated Code/generated_codes.txt</code>
+                    on the server machine.
+                </p>
+            </div>
+
+            <div class="ticket-panel ticket-history-panel">
+                <div class="ticket-panel-head">
+                    <div class="ticket-panel-icon">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
+                    </div>
+                    <div>
+                        <h3>Recent Codes</h3>
+                        <span class="chart-sub">Last 20 generated IDs (newest first)</span>
+                    </div>
+                    <button class="btn btn-outline btn-sm ticket-refresh" id="ticketHistoryRefresh" title="Refresh">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M23 4v6h-6M1 20v-6h6"/><path d="M20.49 9A9 9 0 005.64 5.64L1 10m22 4l-4.64 4.36A9 9 0 013.51 15"/></svg>
+                    </button>
+                </div>
+                <div class="ticket-history-list" id="ticketHistoryList">
+                    <div class="ticket-history-empty">Loading…</div>
+                </div>
+            </div>
+
+        </div>
+
+        <div class="ticket-credit">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4M12 8h.01"/></svg>
+            <span>Ticket ID generator algorithm created by <strong>Haziq Zafran</strong> &copy; 2025</span>
+        </div>
+    </section>
+
     </main><!-- /main-area -->
 
     <!-- Add Modal -->
@@ -386,7 +465,13 @@
             <div class="modal-header"><h2 id="dorkModalTitle"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg>New Dork</h2><button class="modal-close" id="closeDorkModal">&times;</button></div>
             <div class="modal-body">
                 <div class="form-group"><label>Title <span class="required">*</span></label><input type="text" id="dorkTitle" placeholder="e.g. WordPress admin login"></div>
-                <div class="form-group"><label>Category</label><input type="text" id="dorkCategory" placeholder="e.g. Admin & Login" list="dorkCategoryList"><datalist id="dorkCategoryList"></datalist></div>
+                <div class="form-group">
+                    <label>Category</label>
+                    <select id="dorkCategory">
+                        <option value="" disabled selected>Please select...</option>
+                    </select>
+                    <input type="text" id="dorkCategoryNew" placeholder="Enter new category name" style="display:none;margin-top:8px">
+                </div>
                 <div class="form-group"><label>Query <span class="required">*</span></label><textarea id="dorkQuery" placeholder='e.g. inurl:"/wp-admin/" intitle:"Log In"' rows="3"></textarea></div>
                 <div class="form-group"><label>Description</label><textarea id="dorkDescription" placeholder="What this dork finds..." rows="2"></textarea></div>
             </div>

@@ -132,6 +132,7 @@ async function init() {
     bindDorkEvents();
     renderDorks();
 
+    bindTicketEvents();
     bindSearchClears();
 
     // Keep this PC in sync with edits made on other PCs
@@ -283,7 +284,8 @@ function bindNav() {
         dashboard: { t: 'Dashboard', s: 'Overview of all security alerts' },
         alerts:    { t: 'Alerts',    s: 'Manage and triage all recorded alerts' },
         analytics: { t: 'Analytics', s: 'Deeper trends across agencies and types' },
-        dorking:   { t: 'Dorking',   s: 'Saved dork queries for attack-surface recon' }
+        dorking:   { t: 'Dorking',   s: 'Saved dork queries for attack-surface recon' },
+        ticket:    { t: 'Ticket Generator', s: 'Generate unique incident IDs (INC:YYYYMMDD-XXXXXX)' }
     };
     const go = view => {
         document.querySelectorAll('.nav-item').forEach(n => n.classList.toggle('active', n.dataset.view === view));
@@ -291,12 +293,14 @@ function bindNav() {
         const meta = titles[view] || titles.dashboard;
         document.getElementById('pageTitle').textContent = meta.t;
         document.getElementById('pageSub').textContent = meta.s;
-        // Hide alert-only top-bar actions on the Dorking view
-        const hideOnDork = view === 'dorking';
+        // Hide alert-only top-bar actions on the Dorking and Ticket views
+        const hideTopbar = view === 'dorking' || view === 'ticket';
         ['addNewBtn', 'exportBtn', 'importBtn'].forEach(id => {
             const el = document.getElementById(id);
-            if (el) el.style.display = hideOnDork ? 'none' : '';
+            if (el) el.style.display = hideTopbar ? 'none' : '';
         });
+        // Lazy-load the Streamlit iframe the first time the Ticket view is opened
+        if (view === 'ticket') initTicketGenerator();
         // Recompute chart sizes on show (Chart.js needs a visible canvas)
         requestAnimationFrame(updateCharts);
         document.getElementById('sidebar')?.classList.remove('open');
@@ -775,13 +779,128 @@ function splitIocs(str) {
     if (!str) return [];
     return String(str).split(/[\r\n,;]+/).map(s => s.trim()).filter(Boolean);
 }
-function iocHref(v) { return v.startsWith('http') ? v : 'https://' + v; }
+function iocHref(v) { return /^https?:\/\//i.test(v) ? v : 'https://' + v; }
 
 // ── Reveal dashboard after intro ──
 function revealDashboard() {
     document.getElementById('dashboardWrap').style.display = '';
     init();
 }
+
+/* ============================================================
+   Ticket ID Generator (native port of Code.py)
+   - Same CVCDVC algorithm + duplicate-check running server-side
+   - Same save path (~/Documents/Generated Code/generated_codes.txt)
+   ============================================================ */
+const TICKET_API = '/api/tickets';
+let _ticketInit = false;
+
+async function initTicketGenerator() {
+    if (_ticketInit) return;
+    _ticketInit = true;
+    loadTicketHistory();
+}
+
+async function loadTicketHistory() {
+    const list = document.getElementById('ticketHistoryList');
+    if (!list) return;
+    list.innerHTML = '<div class="ticket-history-empty">Loading…</div>';
+    try {
+        const r = await fetch(TICKET_API, { cache: 'no-store' });
+        if (!r.ok) throw new Error('HTTP ' + r.status);
+        const data = await r.json();
+        if (!Array.isArray(data) || data.length === 0) {
+            list.innerHTML = '<div class="ticket-history-empty">No codes generated yet.</div>';
+            return;
+        }
+        list.innerHTML = data.map(entry => `
+            <div class="ticket-history-item">
+                <div style="min-width:0;flex:1">
+                    <div class="ticket-history-code">${esc(entry.code || '')}</div>
+                    <div class="ticket-history-meta">${esc(entry.timestamp || '')}</div>
+                </div>
+                <button class="ticket-history-copy" data-copy="${esc(entry.code || '')}" title="Copy" aria-label="Copy code">
+                    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg>
+                </button>
+            </div>
+        `).join('');
+    } catch (e) {
+        console.error('Ticket history load failed:', e);
+        list.innerHTML = '<div class="ticket-history-empty">Failed to load history.</div>';
+    }
+}
+
+async function generateTicket(e) {
+    if (e) e.preventDefault();
+    const prefix = document.getElementById('ticketPrefix').value;
+    const dateRaw = document.getElementById('ticketDate').value.trim();
+    const btn = document.getElementById('ticketGenerateBtn');
+    const result = document.getElementById('ticketResult');
+    const codeEl = document.getElementById('ticketResultCode');
+    const metaEl = document.getElementById('ticketResultMeta');
+
+    // Light client-side validation; server is authoritative.
+    if (dateRaw && !/^\d{8}$/.test(dateRaw)) {
+        showToast('Date must be 8 digits (YYYYMMDD) or empty', 'error');
+        return;
+    }
+
+    btn.disabled = true;
+    const origLabel = btn.querySelector('span')?.textContent;
+    if (origLabel) btn.querySelector('span').textContent = 'Generating…';
+
+    try {
+        const r = await fetch(TICKET_API, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ prefix, date: dateRaw })
+        });
+        const data = await r.json();
+        if (!r.ok || !data.ok) throw new Error(data.error || ('HTTP ' + r.status));
+
+        codeEl.textContent = data.full_code;
+        metaEl.textContent = `${data.timestamp}  •  attempt ${data.attempts}/1000`;
+        result.hidden = false;
+        showToast('New code generated', 'success');
+        loadTicketHistory();
+    } catch (err) {
+        console.error('generateTicket failed:', err);
+        showToast(err.message || 'Failed to generate code', 'error');
+    } finally {
+        btn.disabled = false;
+        if (origLabel) btn.querySelector('span').textContent = origLabel;
+    }
+}
+
+function copyToClipboard(text) {
+    if (!text) return;
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(text)
+            .then(() => showToast('Copied to clipboard', 'success'))
+            .catch(() => showToast('Copy failed', 'error'));
+    } else {
+        const ta = document.createElement('textarea');
+        ta.value = text; ta.style.position = 'fixed'; ta.style.opacity = '0';
+        document.body.appendChild(ta); ta.select();
+        try { document.execCommand('copy'); showToast('Copied to clipboard', 'success'); }
+        catch (_) { showToast('Copy failed', 'error'); }
+        document.body.removeChild(ta);
+    }
+}
+
+function bindTicketEvents() {
+    document.getElementById('ticketForm')?.addEventListener('submit', generateTicket);
+    document.getElementById('ticketHistoryRefresh')?.addEventListener('click', loadTicketHistory);
+    document.getElementById('ticketCopyBtn')?.addEventListener('click', () => {
+        const t = document.getElementById('ticketResultCode')?.textContent || '';
+        copyToClipboard(t.trim());
+    });
+    document.getElementById('ticketHistoryList')?.addEventListener('click', e => {
+        const btn = e.target.closest('[data-copy]');
+        if (btn) copyToClipboard(btn.dataset.copy);
+    });
+}
+
 
 // ── Search-box clear (×) buttons ──
 function bindSearchClears() {
@@ -983,8 +1102,17 @@ function refreshDorkCategoryUI() {
             cats.map(c => `<option value="${esc(c)}">${esc(c)}</option>`).join('');
         sel.value = cats.includes(cur) || cur === 'all' ? cur : 'all';
     }
-    const dl = document.getElementById('dorkCategoryList');
-    if (dl) dl.innerHTML = cats.map(c => `<option value="${esc(c)}"></option>`).join('');
+    const catSel = document.getElementById('dorkCategory');
+    if (catSel) {
+        const cur = catSel.value;
+        catSel.innerHTML =
+            '<option value="" disabled>Please select...</option>' +
+            cats.map(c => `<option value="${esc(c)}">${esc(c)}</option>`).join('') +
+            '<option value="__new__">+ New category…</option>';
+        // Restore selection if still valid
+        if (cur && (cats.includes(cur) || cur === '__new__')) catSel.value = cur;
+        else catSel.selectedIndex = 0;
+    }
 }
 
 function renderDorks() {
@@ -1076,21 +1204,38 @@ function openDorkModal(id) {
     editingDorkId = id || null;
     const title = document.getElementById('dorkModalTitle');
     const delBtn = document.getElementById('dorkDeleteBtn');
+
+    // Rebuild the category <select> so it includes any freshly-added categories
+    refreshDorkCategoryUI();
+    const catSel = document.getElementById('dorkCategory');
+    const catNew = document.getElementById('dorkCategoryNew');
+    catNew.value = '';
+    catNew.style.display = 'none';
+
     if (id) {
         const d = dorks.find(x => x.id === id);
         if (!d) return;
         title.lastChild.nodeValue = 'Edit Dork';
         document.getElementById('dorkTitle').value = d.title || '';
-        document.getElementById('dorkCategory').value = d.category || '';
         document.getElementById('dorkQuery').value = d.query || '';
         document.getElementById('dorkDescription').value = d.description || '';
+        // Select the existing category, or fall back to the "New" option if it's gone
+        if (d.category && [...catSel.options].some(o => o.value === d.category)) {
+            catSel.value = d.category;
+        } else if (d.category) {
+            catSel.value = '__new__';
+            catNew.value = d.category;
+            catNew.style.display = '';
+        } else {
+            catSel.selectedIndex = 0;
+        }
         delBtn.style.display = '';
     } else {
         title.lastChild.nodeValue = 'New Dork';
         document.getElementById('dorkTitle').value = '';
-        document.getElementById('dorkCategory').value = '';
         document.getElementById('dorkQuery').value = '';
         document.getElementById('dorkDescription').value = '';
+        catSel.selectedIndex = 0;
         delBtn.style.display = 'none';
     }
     document.getElementById('dorkModal').classList.add('active');
@@ -1104,7 +1249,17 @@ function closeDorkModal() {
 
 async function saveDorkFromModal() {
     const title = document.getElementById('dorkTitle').value.trim();
-    const category = document.getElementById('dorkCategory').value.trim() || 'Uncategorized';
+    const catSel = document.getElementById('dorkCategory');
+    const catNew = document.getElementById('dorkCategoryNew');
+    let category;
+    if (catSel.value === '__new__') {
+        category = catNew.value.trim();
+        if (!category) { showToast('Please enter the new category name', 'error'); return; }
+    } else {
+        category = catSel.value.trim();
+    }
+    if (!category) { showToast('Please select a category', 'error'); return; }
+
     const query = document.getElementById('dorkQuery').value.trim();
     const description = document.getElementById('dorkDescription').value.trim();
 
@@ -1152,6 +1307,18 @@ function bindDorkEvents() {
 
     document.getElementById('dorkSearch')?.addEventListener('input', renderDorks);
     document.getElementById('dorkCategoryFilter')?.addEventListener('change', renderDorks);
+
+    document.getElementById('dorkCategory')?.addEventListener('change', e => {
+        const inp = document.getElementById('dorkCategoryNew');
+        if (!inp) return;
+        if (e.target.value === '__new__') {
+            inp.style.display = '';
+            inp.value = '';
+            setTimeout(() => inp.focus(), 30);
+        } else {
+            inp.style.display = 'none';
+        }
+    });
 
     document.getElementById('dorkModal')?.addEventListener('click', e => {
         if (e.target.id === 'dorkModal') closeDorkModal();
