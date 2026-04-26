@@ -34,6 +34,7 @@ from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 ROOT       = os.path.dirname(os.path.abspath(__file__))
 DB_FILE    = os.path.join(ROOT, "server_data.db")
 DORK_DB    = os.path.join(ROOT, "dorking_data.db")
+DORK_SEED  = os.path.join(ROOT, "dorking_data.json")  # default dorks seeded into the DB on first run
 JSON_FILE  = os.path.join(ROOT, "server_data.json")   # legacy, used once for migration
 PORT       = int(sys.argv[1]) if len(sys.argv) > 1 else 3000
 
@@ -54,73 +55,42 @@ def _connect(db_path=None):
     return conn
 
 
-# Default dorks seeded on first run — curated common attack-surface queries
-DEFAULT_DORKS = [
-    # Admin / Login pages
-    {"category": "Admin & Login", "title": "Generic admin login pages", "query": 'inurl:admin intitle:"login"', "description": "Finds generic admin login portals."},
-    {"category": "Admin & Login", "title": "WordPress login (wp-admin)", "query": 'inurl:"/wp-admin/" intitle:"Log In"', "description": "Exposed WordPress admin login pages."},
-    {"category": "Admin & Login", "title": "WordPress login (wp-login.php)", "query": 'inurl:"wp-login.php"', "description": "Direct WordPress login endpoints."},
-    {"category": "Admin & Login", "title": "Joomla administrator login", "query": 'inurl:"/administrator/" intitle:"Joomla"', "description": "Joomla admin backend login."},
-    {"category": "Admin & Login", "title": "Drupal user login", "query": 'inurl:"/user/login" "Drupal"', "description": "Drupal login pages."},
-    {"category": "Admin & Login", "title": "cPanel login", "query": 'inurl:":2082" OR inurl:":2083" intitle:"cPanel"', "description": "cPanel hosting control panel."},
-    {"category": "Admin & Login", "title": "phpMyAdmin login", "query": 'inurl:"phpmyadmin" intitle:"phpMyAdmin"', "description": "Exposed phpMyAdmin consoles."},
-    {"category": "Admin & Login", "title": "Router / device login", "query": 'intitle:"Router" inurl:"login" -site:github.com', "description": "Consumer router admin pages."},
+# Default dorks are loaded from dorking_data.json on first run (mirrors how
+# alert_data.json seeds the alert table). Edit that file to curate the seeds.
+def load_default_dorks():
+    if not os.path.exists(DORK_SEED):
+        return []
+    try:
+        with open(DORK_SEED, "r", encoding="utf-8") as f:
+            data = json.load(f)
+    except Exception as e:
+        print(f"Could not read {DORK_SEED}: {e}")
+        return []
+    if isinstance(data, list):
+        records = data
+    elif isinstance(data, dict):
+        records = data.get("records") or data.get("dorks") or []
+    else:
+        records = []
+    cleaned = []
+    for r in records:
+        if not isinstance(r, dict):
+            continue
+        if not r.get("query"):
+            continue
+        cleaned.append({
+            "category": r.get("category") or "",
+            "title": r.get("title") or "",
+            "query": r["query"],
+            "description": r.get("description") or "",
+        })
+    return cleaned
 
-    # Directory listings
-    {"category": "Directory Listing", "title": "Open directory index", "query": 'intitle:"index of" "parent directory"', "description": "Classic Apache / nginx directory listings."},
-    {"category": "Directory Listing", "title": "Backups exposed", "query": 'intitle:"index of" (backup OR bak OR old)', "description": "Exposed backup directories."},
-    {"category": "Directory Listing", "title": "Uploads directory", "query": 'intitle:"index of" "/uploads/"', "description": "Exposed upload folders."},
 
-    # Exposed / sensitive files
-    {"category": "Exposed Files", "title": ".env files", "query": 'filetype:env "DB_PASSWORD"', "description": "Leaked application environment files."},
-    {"category": "Exposed Files", "title": ".git repositories", "query": 'inurl:".git" intitle:"index of"', "description": "Exposed .git directories."},
-    {"category": "Exposed Files", "title": "SQL dumps", "query": 'filetype:sql "INSERT INTO" (password OR passwd OR pwd)', "description": "Leaked SQL database dumps."},
-    {"category": "Exposed Files", "title": "Log files", "query": 'filetype:log inurl:"access.log"', "description": "Exposed web server logs."},
-    {"category": "Exposed Files", "title": "Config files", "query": 'ext:conf OR ext:cnf OR ext:ini "password"', "description": "Exposed config files containing secrets."},
-    {"category": "Exposed Files", "title": "WordPress wp-config.php backup", "query": 'inurl:"wp-config.php.bak" OR inurl:"wp-config.php~"', "description": "Leaked WordPress configuration backups."},
-    {"category": "Exposed Files", "title": "SSH private keys", "query": 'intitle:"index of" "id_rsa" -pub', "description": "Exposed SSH private keys."},
-    {"category": "Exposed Files", "title": "AWS credentials", "query": '"aws_access_key_id" "aws_secret_access_key" ext:csv OR ext:txt', "description": "Leaked AWS credentials."},
-
-    # Errors / debug info
-    {"category": "Errors & Debug", "title": "PHP info pages", "query": 'intitle:"phpinfo()" "PHP Version"', "description": "Exposed phpinfo() pages."},
-    {"category": "Errors & Debug", "title": "PHP errors / warnings", "query": '"Warning: mysql_" OR "Fatal error:" ext:php', "description": "Pages leaking PHP errors/stack traces."},
-    {"category": "Errors & Debug", "title": "Laravel debug bar / Ignition", "query": 'intext:"Whoops, looks like something went wrong" "Laravel"', "description": "Laravel in debug mode."},
-    {"category": "Errors & Debug", "title": "Django debug page", "query": '"You are seeing this error because you have DEBUG = True"', "description": "Django apps running with DEBUG=True."},
-    {"category": "Errors & Debug", "title": "ASP.NET detailed errors", "query": '"Server Error in" "/Application." inurl:aspx', "description": "ASP.NET detailed server error pages."},
-    {"category": "Errors & Debug", "title": "WinDev / WebDev errors", "query": '"WD230Action" OR "WINDEV Error" OR "WebDev Error"', "description": "WinDev / WebDev stack traces."},
-
-    # CMS-specific
-    {"category": "CMS (WordPress)", "title": "Exposed WP readme.html", "query": 'inurl:"/readme.html" "WordPress"', "description": "Reveals WordPress version."},
-    {"category": "CMS (WordPress)", "title": "Plugin directory listing", "query": 'intitle:"index of" "/wp-content/plugins/"', "description": "Exposed plugin directory (enumerate plugins)."},
-    {"category": "CMS (WordPress)", "title": "Debug log", "query": 'inurl:"/wp-content/debug.log"', "description": "WordPress debug logs."},
-    {"category": "CMS (Joomla)", "title": "Joomla configuration.php~ backup", "query": 'inurl:"configuration.php~" OR inurl:"configuration.php.bak"', "description": "Joomla config backups."},
-    {"category": "CMS (Drupal)", "title": "Drupal CHANGELOG.txt", "query": 'inurl:"CHANGELOG.txt" "Drupal"', "description": "Reveals Drupal version."},
-
-    # Servers / services
-    {"category": "Servers & Services", "title": "Apache Tomcat manager", "query": 'intitle:"Apache Tomcat" inurl:"/manager/html"', "description": "Exposed Tomcat Manager app."},
-    {"category": "Servers & Services", "title": "Jenkins dashboards", "query": 'intitle:"Dashboard [Jenkins]"', "description": "Exposed Jenkins CI dashboards."},
-    {"category": "Servers & Services", "title": "Kibana dashboards", "query": 'intitle:"Kibana" inurl:":5601"', "description": "Exposed Kibana instances."},
-    {"category": "Servers & Services", "title": "Grafana login", "query": 'intitle:"Grafana" inurl:"/login"', "description": "Exposed Grafana login pages."},
-    {"category": "Servers & Services", "title": "Webcams (live view)", "query": 'inurl:"view/view.shtml"', "description": "Exposed network cameras."},
-
-    # Vulnerabilities / misc
-    {"category": "Vulnerabilities", "title": "Open redirect params", "query": 'inurl:"redirect=" OR inurl:"url=" OR inurl:"next="', "description": "Candidates for open-redirect testing."},
-    {"category": "Vulnerabilities", "title": "SQLi candidate params", "query": 'inurl:"id=" OR inurl:"cat=" OR inurl:"pid="', "description": "URLs with common injectable params."},
-    {"category": "Vulnerabilities", "title": "LFI candidate params", "query": 'inurl:"page=" OR inurl:"file=" OR inurl:"include="', "description": "URLs with file-include style params."},
-    {"category": "Vulnerabilities", "title": "Exposed IDOR patterns", "query": 'inurl:"user_id=" OR inurl:"account=" OR inurl:"invoice="', "description": "Candidates for IDOR testing."},
-
-    # SEO spam (hacked-site indicators)
-    {"category": "SEO Spam", "title": "Pharma spam on .gov / .edu", "query": 'site:gov OR site:edu (viagra OR cialis OR "buy cheap")', "description": "Pharma keyword injection on government / education domains."},
-    {"category": "SEO Spam", "title": "Casino / gambling spam", "query": 'site:gov OR site:edu (casino OR poker OR "slot online")', "description": "Gambling SEO spam injected into trusted domains."},
-    {"category": "SEO Spam", "title": "Japanese SEO spam", "query": '"激安" OR "通販" site:-jp inurl:/', "description": "Japanese keyword spam (\"cheap\", \"mail order\") on non-.jp sites — classic hacked-site indicator."},
-    {"category": "SEO Spam", "title": "Indonesian/SE Asia slot spam", "query": '("slot gacor" OR "situs slot" OR "judi online") site:gov OR site:edu', "description": "Indonesian gambling/slot SEO spam on trusted TLDs."},
-    {"category": "SEO Spam", "title": "Replica / fake goods spam", "query": '("replica watches" OR "cheap nike" OR "louis vuitton outlet") site:gov OR site:edu', "description": "Counterfeit-goods SEO spam."},
-    {"category": "SEO Spam", "title": "Hidden PHP spam pages", "query": 'inurl:"/wp-content/uploads/" ext:php (viagra OR casino OR slot)', "description": "Spam PHP files dropped into WordPress uploads."},
-    {"category": "SEO Spam", "title": "Cloaked spam titles", "query": 'intitle:"buy" intitle:"online" intitle:"cheap" site:gov', "description": "Pages with spam titles on government domains (likely cloaking)."},
-    {"category": "SEO Spam", "title": "Essay / homework spam", "query": '("write my essay" OR "essay writing service") site:edu', "description": "Essay-mill SEO spam injected into university sites."},
-    {"category": "SEO Spam", "title": "Adult spam injections", "query": '("xxx" OR "porn" OR "escort") site:gov OR site:edu', "description": "Adult-keyword SEO spam on trusted TLDs."},
-    {"category": "SEO Spam", "title": "Redirect-to-spam chains", "query": 'inurl:"?url=http" (casino OR viagra OR slot)', "description": "Open redirects abused for SEO spam laundering."},
-]
+def _stable_default_key(d):
+    import hashlib
+    raw = "dork-default::" + (d.get("category") or "") + "::" + (d.get("title") or "") + "::" + (d.get("query") or "")
+    return hashlib.sha1(raw.encode("utf-8")).hexdigest()
 
 
 def init_dork_db():
@@ -137,29 +107,72 @@ def init_dork_db():
             )
         """)
         conn.execute("CREATE INDEX IF NOT EXISTS idx_dorks_pos ON dorks(pos)")
+        cols = {r[1] for r in conn.execute("PRAGMA table_info(dorks)").fetchall()}
+        if "seed_key" not in cols:
+            conn.execute("ALTER TABLE dorks ADD COLUMN seed_key TEXT")
         conn.commit()
 
-    # Seed defaults. If the table is empty, insert all of them. If it already
-    # has records, only add defaults whose query isn't already present so that
-    # user edits are preserved while newly-added default categories still appear.
     import time, uuid
     now = time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime())
+
+    defaults = load_default_dorks()
+    if not defaults:
+        return
+
+    # Backfill seed_key on existing rows so previously-seeded defaults are
+    # recognized even if the user has edited the query. Match by exact query
+    # first; fall back to (category, title) which survives query edits.
+    with _connect(DORK_DB) as conn:
+        rows = conn.execute(
+            "SELECT id, category, title, query, seed_key FROM dorks"
+        ).fetchall()
+        used_keys = {r[4] for r in rows if r[4]}
+        by_query = {}
+        by_cat_title = {}
+        for rid, cat, title, q, sk in rows:
+            if sk:
+                continue
+            by_query.setdefault(q or "", []).append(rid)
+            by_cat_title.setdefault(((cat or ""), (title or "")), []).append(rid)
+
+        claimed = set()
+        updates = []
+        for d in defaults:
+            key = _stable_default_key(d)
+            if key in used_keys:
+                continue
+            candidates = [i for i in by_query.get(d["query"], []) if i not in claimed]
+            if not candidates:
+                candidates = [i for i in by_cat_title.get((d["category"], d["title"]), []) if i not in claimed]
+            if candidates:
+                rid = candidates[0]
+                claimed.add(rid)
+                used_keys.add(key)
+                updates.append((key, rid))
+        if updates:
+            conn.executemany("UPDATE dorks SET seed_key = ? WHERE id = ?", updates)
+            conn.commit()
+
+    # Seed only defaults whose seed_key is not already present.
+    with _connect(DORK_DB) as conn:
+        seeded = {r[0] for r in conn.execute(
+            "SELECT seed_key FROM dorks WHERE seed_key IS NOT NULL"
+        ).fetchall()}
+    new_defaults = [d for d in defaults if _stable_default_key(d) not in seeded]
+    if not new_defaults:
+        return
+
+    new_entries = [{
+        "id": uuid.uuid4().hex,
+        "category": d["category"], "title": d["title"], "query": d["query"],
+        "description": d.get("description", ""), "created_at": now,
+        "seed_key": _stable_default_key(d),
+    } for d in new_defaults]
+
     existing = read_dorks()
-    known = {d.get("query", "") for d in existing}
-    missing = [d for d in DEFAULT_DORKS if d["query"] not in known]
     if not existing:
-        merged = [{
-            "id": uuid.uuid4().hex,
-            "category": d["category"], "title": d["title"], "query": d["query"],
-            "description": d.get("description", ""), "created_at": now,
-        } for d in DEFAULT_DORKS]
-        _dork_replace_all(merged)
-    elif missing:
-        new_entries = [{
-            "id": uuid.uuid4().hex,
-            "category": d["category"], "title": d["title"], "query": d["query"],
-            "description": d.get("description", ""), "created_at": now,
-        } for d in missing]
+        _dork_replace_all(new_entries)
+    else:
         _dork_replace_all(existing + new_entries)
         print(f"Seeded {len(new_entries)} new default dork(s).")
 
@@ -177,7 +190,7 @@ def read_dorks():
 
 
 def _dork_replace_all(arr):
-    rows = []
+    staged = []
     for i, rec in enumerate(arr):
         if not isinstance(rec, dict):
             continue
@@ -185,20 +198,30 @@ def _dork_replace_all(arr):
         q   = rec.get("query")
         if not rid or not q:
             continue
-        rows.append((
-            str(rid), i,
-            rec.get("category") or "",
-            rec.get("title") or "",
-            q,
-            rec.get("description") or "",
-            rec.get("created_at") or "",
-        ))
+        staged.append((str(rid), i, rec, q))
     with _connect(DORK_DB) as conn:
         try:
             conn.execute("BEGIN IMMEDIATE")
+            existing_keys = {r[0]: r[1] for r in conn.execute(
+                "SELECT id, seed_key FROM dorks"
+            ).fetchall()}
             conn.execute("DELETE FROM dorks")
+            rows = []
+            for rid, pos, rec, q in staged:
+                seed_key = rec.get("seed_key")
+                if seed_key is None:
+                    seed_key = existing_keys.get(rid)
+                rows.append((
+                    rid, pos,
+                    rec.get("category") or "",
+                    rec.get("title") or "",
+                    q,
+                    rec.get("description") or "",
+                    rec.get("created_at") or "",
+                    seed_key,
+                ))
             conn.executemany(
-                "INSERT OR REPLACE INTO dorks (id, pos, category, title, query, description, created_at) VALUES (?, ?, ?, ?, ?, ?, ?)",
+                "INSERT OR REPLACE INTO dorks (id, pos, category, title, query, description, created_at, seed_key) VALUES (?, ?, ?, ?, ?, ?, ?, ?)",
                 rows,
             )
             conn.commit()
