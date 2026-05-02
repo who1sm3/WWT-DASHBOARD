@@ -1032,6 +1032,38 @@ body {
 }
 
 /* ============================================================
+   Learning resource cards — full URL visible, white & readable
+   ============================================================ */
+.learn-url {
+    font-family: 'JetBrains Mono', ui-monospace, SFMono-Regular, Consolas, monospace;
+    font-size: 11.5px;
+    line-height: 1.55;
+    color: #ffffff;
+    background: rgba(255, 255, 255, 0.06);
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    padding: 9px 12px;
+    border-radius: var(--radius-md);
+    word-break: break-all;
+    overflow-wrap: anywhere;
+    transition: background 0.15s ease, border-color 0.15s ease;
+    display: block;
+}
+.dork-card:hover .learn-url {
+    background: rgba(255, 255, 255, 0.10);
+    border-color: rgba(255, 255, 255, 0.20);
+}
+.learn-url-host {
+    color: rgba(255, 255, 255, 0.55);
+    font-weight: 600;
+    margin-right: 4px;
+    user-select: none;
+}
+
+/* Slightly more breathing room for the learning grid since cards have
+   variable URL lengths and benefit from more horizontal space. */
+.learn-grid { grid-template-columns: repeat(auto-fill, minmax(340px, 1fr)); }
+
+/* ============================================================
    Ticket Generator view (native)
    ============================================================ */
 .ticket-layout {

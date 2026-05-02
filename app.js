@@ -54,20 +54,21 @@ function saveData() {
     });
 }
 
+// Returns 'has-data' (rows loaded), 'empty' (server reachable but DB is empty,
+// safe to seed), or 'error' (network/server failure — must NOT seed, otherwise
+// a transient hiccup would clobber existing remote data on the next PUT).
 async function loadData() {
     try {
         const r = await fetch(API_URL, { cache: 'no-store' });
-        if (!r.ok) return false;
+        if (!r.ok) return 'error';
         const data = await r.json();
-        if (Array.isArray(data) && data.length > 0) {
-            alerts = data;
-            lastServerSnapshot = JSON.stringify(data);
-            return true;
-        }
-        return false;
+        if (!Array.isArray(data)) return 'error';
+        alerts = data;
+        lastServerSnapshot = JSON.stringify(data);
+        return data.length > 0 ? 'has-data' : 'empty';
     } catch (e) {
         console.error('Load failed:', e);
-        return false;
+        return 'error';
     }
 }
 
@@ -106,8 +107,10 @@ async function pollServer() {
 // ── Init ──
 async function init() {
 
-    if (!(await loadData())) {
-        // Server has no data yet — seed it from alert_data.json, then PUT to server
+    const status = await loadData();
+    if (status === 'empty') {
+        // Server is reachable but the DB is empty — seed from alert_data.json
+        // and PUT it back so every PC sees the same starting set.
         try {
             const resp = await fetch('alert_data.json');
             const data = await resp.json();
@@ -119,6 +122,11 @@ async function init() {
             showToast('Could not load alert_data.json — starting empty', 'error');
         }
         await saveData();
+    } else if (status === 'error') {
+        // Network/server failure — keep alerts empty, don't seed (would
+        // overwrite existing server data once it comes back).
+        alerts = [];
+        showToast('Could not reach server — try refreshing', 'error');
     }
 
     bindEvents();
@@ -132,11 +140,20 @@ async function init() {
     bindDorkEvents();
     renderDorks();
 
+    // Learning module (separate DB on the server)
+    await loadLearning();
+    bindLearnEvents();
+    renderLearning();
+
     bindTicketEvents();
     bindSearchClears();
 
-    // Keep this PC in sync with edits made on other PCs
+    // Keep this PC in sync with edits made on other PCs — alerts, dorks, and
+    // learning resources all share the same 5s cadence. Each poller has its
+    // own pause guards (active save, open modal, in-progress edit/delete).
     setInterval(pollServer, POLL_INTERVAL_MS);
+    setInterval(pollDorks, POLL_INTERVAL_MS);
+    setInterval(pollLearning, POLL_INTERVAL_MS);
 }
 
 // ── Filtering & Sorting ──
@@ -203,12 +220,23 @@ function getTypeStyle(type) {
         'Apache Tomcat': { bg: '#f5e6fe', color: '#7c3aed' },
         'WinDev/WebDev Error': { bg: '#f0fdf4', color: '#166534' },
         'phpMyAdmin': { bg: '#fff1f2', color: '#be123c' },
+        'SEO Spam': { bg: '#fef3c7', color: '#a16207' },
     };
     return s[type] || { bg: '#f3f4f6', color: '#4b5563' };
 }
 
 function statusCls(status) {
     return { 'Open':'status-open','Closed':'status-closed','Waiting':'status-waiting','CTM':'status-ctm' }[status] || '';
+}
+
+// Convert <input type="date"> value (YYYY-MM-DD) → "D/M/YYYY" without going
+// through `new Date()`, which interprets the string as UTC midnight and can
+// roll back a day in non-UTC timezones.
+function isoDateToDmy(iso) {
+    if (!iso) return '';
+    const [y, m, d] = iso.split('-').map(Number);
+    if ([y, m, d].some(Number.isNaN)) return '';
+    return `${d}/${m}/${y}`;
 }
 
 // ── Render Table ──
@@ -285,6 +313,7 @@ function bindNav() {
         alerts:    { t: 'Alerts',    s: 'Manage and triage all recorded alerts' },
         analytics: { t: 'Analytics', s: 'Deeper trends across agencies and types' },
         dorking:   { t: 'Dorking',   s: 'Saved dork queries for attack-surface recon' },
+        learning:  { t: 'Learning',  s: 'Free certification courses curated for SOC analysts' },
         ticket:    { t: 'Ticket Generator', s: 'Generate unique incident IDs (INC:YYYYMMDD-XXXXXX)' }
     };
     const go = view => {
@@ -294,7 +323,7 @@ function bindNav() {
         document.getElementById('pageTitle').textContent = meta.t;
         document.getElementById('pageSub').textContent = meta.s;
         // Hide alert-only top-bar actions on the Dorking and Ticket views
-        const hideTopbar = view === 'dorking' || view === 'ticket';
+        const hideTopbar = view === 'dorking' || view === 'ticket' || view === 'learning';
         ['addNewBtn', 'exportBtn', 'importBtn'].forEach(id => {
             const el = document.getElementById(id);
             if (el) el.style.display = hideTopbar ? 'none' : '';
@@ -304,7 +333,6 @@ function bindNav() {
         // Recompute chart sizes on show (Chart.js needs a visible canvas)
         requestAnimationFrame(updateCharts);
         document.getElementById('sidebar')?.classList.remove('open');
-        document.getElementById('sidebarBackdrop')?.classList.remove('active');
     };
     document.querySelectorAll('[data-view]').forEach(btn => {
         btn.addEventListener('click', () => go(btn.dataset.view));
@@ -324,16 +352,16 @@ function renderRecent() {
     const el = document.getElementById('recentAlerts');
     if (!el) return;
     const recent = [...alerts]
-        .sort((a, b) => new Date(b.lastModified || 0) - new Date(a.lastModified || 0))
+        .sort((a, b) => new Date(b.dateAdded || 0) - new Date(a.dateAdded || 0))
         .slice(0, 6);
     if (recent.length === 0) {
         el.innerHTML = '<div class="empty-state"><p>No alerts yet</p></div>';
         return;
     }
-    el.innerHTML = recent.map(a => {
+    el.innerHTML = recent.map((a, i) => {
         const sc = statusCls(a.status);
         return `<div class="recent-item">
-            <div class="recent-no">${esc(String(a.no || '—'))}</div>
+            <div class="recent-no">${i + 1}</div>
             <div class="recent-meta">
                 <div class="recent-agency" title="${esc(a.agency)}">${esc(a.agency || '—')}</div>
                 <div class="recent-type">${esc(a.type || '—')}</div>
@@ -426,7 +454,7 @@ function updateCharts() {
     const elAg = document.getElementById('chartAgencies');
     if (isVisible(elAg)) {
         const byAg = {};
-        alerts.forEach(a => { const k = a.agency || 'Unknown'; byAg[k] = (byAg[k] || 0) + 1; });
+        alerts.forEach(a => { const k = (a.agency || '').trim() || 'Unknown'; byAg[k] = (byAg[k] || 0) + 1; });
         const top = Object.entries(byAg).sort((a, b) => b[1] - a[1]).slice(0, 10);
         _charts.agencies = new Chart(elAg, {
             type: 'bar',
@@ -499,12 +527,15 @@ function updateCharts() {
 
 function animNum(id, target, suffix = '') {
     const el = document.querySelector(`#${id} .stat-value`); if (!el) return;
+    // Cancel any in-flight animation on this stat — otherwise rapid updates
+    // (e.g. bulk edits + polling) stack intervals and the value visibly jitters.
+    if (el._animTimer) { clearInterval(el._animTimer); el._animTimer = null; }
     const cur = parseInt(el.textContent) || 0;
     if (cur === target) { el.textContent = target + suffix; return; }
     const d = target - cur; const steps = Math.min(Math.abs(d), 20) || 1; const inc = d / steps; let s = 0;
-    const t = setInterval(() => {
+    el._animTimer = setInterval(() => {
         s++;
-        if (s >= steps) { el.textContent = target + suffix; clearInterval(t); }
+        if (s >= steps) { el.textContent = target + suffix; clearInterval(el._animTimer); el._animTimer = null; }
         else el.textContent = Math.round(cur + inc * s) + suffix;
     }, 30);
 }
@@ -516,7 +547,17 @@ function bindEvents() {
     si.addEventListener('input', () => { clearTimeout(debounce); debounce = setTimeout(() => { applyFilters(); renderTable(); }, 200); });
     document.addEventListener('keydown', e => {
         if ((e.ctrlKey||e.metaKey) && e.key === 'k') { e.preventDefault(); si.focus(); si.select(); }
-        if (e.key === 'Escape') closeAllModals();
+        if (e.key === 'Escape') {
+            // Nested delete modals must use their own close so the underlying
+            // edit modal is restored (instead of nuking everything via closeAllModals).
+            if (document.getElementById('learnDeleteModal')?.classList.contains('active')) {
+                closeLearnDeleteModal(); return;
+            }
+            if (document.getElementById('dorkDeleteModal')?.classList.contains('active')) {
+                closeDorkDeleteModal(); return;
+            }
+            closeAllModals();
+        }
     });
 
     document.querySelectorAll('.filter-btn').forEach(btn => btn.addEventListener('click', () => {
@@ -560,7 +601,15 @@ function bindEvents() {
     document.getElementById('exportBtn').addEventListener('click', exportData);
     document.getElementById('importBtn').addEventListener('click', () => document.getElementById('importFile').click());
     document.getElementById('importFile').addEventListener('change', importData);
-    document.querySelectorAll('.modal-overlay').forEach(o => o.addEventListener('click', e => { if (e.target === o) closeAllModals(); }));
+    // Generic backdrop-to-close for all alert modals. The nested delete
+    // confirmations (dorkDeleteModal, learnDeleteModal) own their own backdrop
+    // handlers because they need to restore the underlying edit modal on
+    // cancel — let them handle backdrop clicks themselves.
+    const NESTED_DELETE_MODALS = new Set(['dorkDeleteModal', 'learnDeleteModal']);
+    document.querySelectorAll('.modal-overlay').forEach(o => {
+        if (NESTED_DELETE_MODALS.has(o.id)) return;
+        o.addEventListener('click', e => { if (e.target === o) closeAllModals(); });
+    });
 }
 
 function bulkSet(status) {
@@ -597,9 +646,7 @@ function saveNewAlert() {
     if (!status) { showToast('Please select a status', 'error'); return; }
     const maxNo = alerts.reduce((m, a) => { const n = parseInt(a.no); return isNaN(n) ? m : Math.max(m, n); }, 0);
     const now = new Date().toISOString();
-    const rd = document.getElementById('newReleaseDate').value;
-    let fd = '';
-    if (rd) { const d = new Date(rd); fd = `${d.getDate()}/${d.getMonth()+1}/${d.getFullYear()}`; }
+    const fd = isoDateToDmy(document.getElementById('newReleaseDate').value);
     alerts.push({
         id: 'a_' + Date.now().toString(36) + '_' + Math.random().toString(36).substr(2,6),
         no: String(maxNo + 1), agency: clampField(agency, FIELD_MAX.agency),
@@ -635,8 +682,7 @@ function saveEditAlert() {
     const agency = document.getElementById('editAgency').value.trim();
     if (!agency) { showToast('Agency name is required', 'error'); return; }
     if (agency.length > FIELD_MAX.agency) { showToast(`Agency too long (max ${FIELD_MAX.agency} chars)`, 'error'); return; }
-    const rd = document.getElementById('editReleaseDate').value;
-    let fd = ''; if (rd) { const d = new Date(rd); fd = `${d.getDate()}/${d.getMonth()+1}/${d.getFullYear()}`; }
+    const fd = isoDateToDmy(document.getElementById('editReleaseDate').value);
     a.agency = clampField(agency, FIELD_MAX.agency);
     a.incidentId = clampField(document.getElementById('editIncidentId').value.trim(), FIELD_MAX.incidentId);
     a.releaseDate = fd;
@@ -655,10 +701,18 @@ function openDeleteModal(ids) {
     document.getElementById('deleteModal').classList.add('active');
 }
 function confirmDelete() {
-    alerts = alerts.filter(a => !deletingIds.includes(a.id));
-    deletingIds.forEach(id => selectedIds.delete(id));
-    saveData(); closeModal('deleteModal'); applyFilters(); renderTable(); updateStats();
-    showToast(`${deletingIds.length} alert(s) deleted`, 'info'); deletingIds = [];
+    const btn = document.getElementById('confirmDeleteBtn');
+    if (btn) btn.disabled = true;   // guard against double-click
+    try {
+        const n = deletingIds.length;
+        alerts = alerts.filter(a => !deletingIds.includes(a.id));
+        deletingIds.forEach(id => selectedIds.delete(id));
+        deletingIds = [];
+        saveData(); closeModal('deleteModal'); applyFilters(); renderTable(); updateStats();
+        showToast(`${n} alert(s) deleted`, 'info');
+    } finally {
+        if (btn) btn.disabled = false;
+    }
 }
 
 // ── Detail Panel ──
@@ -931,18 +985,19 @@ function runCyberIntro(onDone) {
     const canvas = document.getElementById('introMatrix');
     let rafId = null;
     let audioCtx = null;
+    let resizeHandler = null;
     if (canvas && canvas.getContext) {
         const ctx = canvas.getContext('2d');
         const charset = 'アイウエオカキクケコサシスセソタチツテトナニヌネノ0123456789ABCDEF<>#$%*';
         let cols = 0, drops = [];
-        const resize = () => {
+        resizeHandler = () => {
             canvas.width = window.innerWidth;
             canvas.height = window.innerHeight;
             cols = Math.floor(canvas.width / 16);
             drops = new Array(cols).fill(0).map(() => Math.random() * -50);
         };
-        resize();
-        window.addEventListener('resize', resize);
+        resizeHandler();
+        window.addEventListener('resize', resizeHandler);
 
         const draw = () => {
             ctx.fillStyle = 'rgba(15, 17, 23, 0.20)';
@@ -1008,6 +1063,7 @@ function runCyberIntro(onDone) {
     const finish = () => {
         el.classList.add('intro-fade-out');
         window.removeEventListener('mousemove', onMove);
+        if (resizeHandler) window.removeEventListener('resize', resizeHandler);
         setTimeout(() => {
             el.classList.add('intro-hidden');
             if (rafId) cancelAnimationFrame(rafId);
@@ -1053,13 +1109,17 @@ document.addEventListener('DOMContentLoaded', () => {
 const DORK_API = '/api/dorks';
 let dorks = [];
 let editingDorkId = null;
+let lastDorkSnapshot = '';      // last server text we saw, used by pollDorks
+let dorkSavePending = false;    // true while a PUT is in flight
 
 async function loadDorks() {
     try {
         const r = await fetch(DORK_API, { cache: 'no-store' });
         if (!r.ok) throw new Error('HTTP ' + r.status);
-        const data = await r.json();
+        const text = await r.text();
+        const data = JSON.parse(text);
         dorks = Array.isArray(data) ? data : [];
+        lastDorkSnapshot = text;
     } catch (e) {
         console.error('loadDorks failed:', e);
         dorks = [];
@@ -1070,12 +1130,38 @@ async function loadDorks() {
 
 function saveDorks() {
     const payload = JSON.stringify(dorks);
+    dorkSavePending = true;
     return fetch(DORK_API, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: payload
-    }).then(r => { if (!r.ok) throw new Error('HTTP ' + r.status); })
-      .catch(e => { console.error('saveDorks failed:', e); showToast('Failed to save dorks', 'error'); });
+    }).then(r => {
+        if (!r.ok) throw new Error('HTTP ' + r.status);
+        lastDorkSnapshot = payload;   // our PUT IS the new server state
+    }).catch(e => {
+        console.error('saveDorks failed:', e);
+        showToast('Failed to save dorks', 'error');
+    }).finally(() => { dorkSavePending = false; });
+}
+
+// Pull /api/dorks every POLL_INTERVAL_MS so adds/edits from other PCs appear here.
+async function pollDorks() {
+    if (dorkSavePending) return;
+    if (editingDorkId || pendingDorkDeleteId) return;
+    if (document.querySelector('.modal-overlay.active')) return;
+    try {
+        const r = await fetch(DORK_API, { cache: 'no-store' });
+        if (!r.ok) return;
+        const text = await r.text();
+        if (text === lastDorkSnapshot) return;   // unchanged
+        const data = JSON.parse(text);
+        if (!Array.isArray(data)) return;
+        lastDorkSnapshot = text;
+        dorks = data;
+        renderDorks();
+        const nb = document.getElementById('navDorkCount');
+        if (nb) nb.textContent = dorks.length;
+    } catch (_) { /* transient — ignore */ }
 }
 
 function searchEngineUrl(engine, q) {
@@ -1142,7 +1228,7 @@ function renderDorks() {
 
     const html = Object.keys(groups).sort().map(cat => {
         const items = groups[cat].map(d => `
-            <button class="dork-card" data-id="${esc(d.id)}" data-action="run" type="button" title="Click to search">
+            <button class="dork-card" data-id="${esc(d.id)}" data-action="open" type="button" title="Click to search">
                 <div class="dork-card-head">
                     <div class="dork-card-title">${esc(d.title || '(untitled)')}</div>
                     <span class="dork-card-edit" data-id="${esc(d.id)}" data-action="edit" title="Edit" aria-label="Edit dork" role="button">
@@ -1154,7 +1240,7 @@ function renderDorks() {
                 <div class="dork-card-foot">
                     <span class="dork-card-tag">${esc(d.category || 'Uncategorized')}</span>
                     <span class="dork-run-pill">
-                        Run
+                        Open
                         <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M7 17L17 7M9 7h8v8"/></svg>
                     </span>
                 </div>
@@ -1269,13 +1355,22 @@ async function saveDorkFromModal() {
 
     const now = new Date().toISOString();
     if (editingDorkId) {
-        const d = dorks.find(x => x.id === editingDorkId);
-        if (d) Object.assign(d, { title, category, query, description });
+        // Rebuild the object so its key order matches the server's read_dorks
+        // return order — keeps saved JSON byte-identical to the next poll's
+        // response, so the snapshot equality check short-circuits correctly.
+        const idx = dorks.findIndex(x => x.id === editingDorkId);
+        if (idx >= 0) {
+            const prev = dorks[idx];
+            dorks[idx] = {
+                id: prev.id, category, title, query, description,
+                created_at: prev.created_at || now,
+            };
+        }
         showToast('Dork updated', 'success');
     } else {
         dorks.push({
             id: 'd_' + Date.now().toString(36) + '_' + Math.random().toString(36).slice(2, 8),
-            title, category, query, description, created_at: now
+            category, title, query, description, created_at: now
         });
         showToast('Dork added', 'success');
     }
@@ -1286,16 +1381,49 @@ async function saveDorkFromModal() {
     if (nb) nb.textContent = dorks.length;
 }
 
-async function deleteDorkFromModal() {
+// Centered delete-confirmation flow for dorks (mirrors the learning module).
+let pendingDorkDeleteId = null;
+
+function openDorkDeleteModal(id) {
+    if (!id) return;
+    const d = dorks.find(x => x.id === id);
+    if (!d) return;
+    pendingDorkDeleteId = id;
+    document.getElementById('dorkDeleteTitle').textContent = d.title || '(untitled)';
+    document.getElementById('dorkModal')?.classList.remove('active');
+    document.getElementById('dorkDeleteModal').classList.add('active');
+}
+
+function closeDorkDeleteModal() {
+    document.getElementById('dorkDeleteModal').classList.remove('active');
+    pendingDorkDeleteId = null;
+    if (editingDorkId) document.getElementById('dorkModal')?.classList.add('active');
+}
+
+async function confirmDorkDelete() {
+    const id = pendingDorkDeleteId;
+    if (!id) { closeDorkDeleteModal(); return; }
+    const btn = document.getElementById('confirmDorkDeleteBtn');
+    if (btn) btn.disabled = true;   // guard against double-click → duplicate PUTs
+    try {
+        dorks = dorks.filter(x => x.id !== id);
+        pendingDorkDeleteId = null;
+        editingDorkId = null;
+        document.getElementById('dorkDeleteModal').classList.remove('active');
+        document.getElementById('dorkModal').classList.remove('active');
+        await saveDorks();
+        renderDorks();
+        const nb = document.getElementById('navDorkCount');
+        if (nb) nb.textContent = dorks.length;
+        showToast('Dork deleted', 'info');
+    } finally {
+        if (btn) btn.disabled = false;
+    }
+}
+
+function deleteDorkFromModal() {
     if (!editingDorkId) return;
-    if (!confirm('Delete this dork?')) return;
-    dorks = dorks.filter(x => x.id !== editingDorkId);
-    await saveDorks();
-    closeDorkModal();
-    renderDorks();
-    const nb = document.getElementById('navDorkCount');
-    if (nb) nb.textContent = dorks.length;
-    showToast('Dork deleted', 'info');
+    openDorkDeleteModal(editingDorkId);
 }
 
 function bindDorkEvents() {
@@ -1324,6 +1452,14 @@ function bindDorkEvents() {
         if (e.target.id === 'dorkModal') closeDorkModal();
     });
 
+    // Centered delete confirmation
+    document.getElementById('closeDorkDeleteModal')?.addEventListener('click', closeDorkDeleteModal);
+    document.getElementById('cancelDorkDeleteModal')?.addEventListener('click', closeDorkDeleteModal);
+    document.getElementById('confirmDorkDeleteBtn')?.addEventListener('click', confirmDorkDelete);
+    document.getElementById('dorkDeleteModal')?.addEventListener('click', e => {
+        if (e.target.id === 'dorkDeleteModal') closeDorkDeleteModal();
+    });
+
     document.getElementById('dorkGroups')?.addEventListener('click', e => {
         const editBtn = e.target.closest('[data-action="edit"]');
         if (editBtn) {
@@ -1331,10 +1467,368 @@ function bindDorkEvents() {
             openDorkModal(editBtn.dataset.id);
             return;
         }
-        const card = e.target.closest('[data-action="run"]');
+        const card = e.target.closest('[data-action="open"]');
         if (card) {
             const d = dorks.find(x => x.id === card.dataset.id);
             if (d) runDork(d.query);
+        }
+    });
+}
+
+/* ============================================================
+   Learning module — separate DB (/api/learning, learning_data.db)
+   Same UX pattern as Dorking but cards open the URL in a new tab.
+   ============================================================ */
+const LEARN_API = '/api/learning';
+let learning = [];
+let editingLearnId = null;
+let lastLearnSnapshot = '';     // last server text we saw, used by pollLearning
+let learnSavePending = false;   // true while a PUT is in flight
+
+async function loadLearning() {
+    try {
+        const r = await fetch(LEARN_API, { cache: 'no-store' });
+        if (!r.ok) throw new Error('HTTP ' + r.status);
+        const text = await r.text();
+        const data = JSON.parse(text);
+        learning = Array.isArray(data) ? data : [];
+        lastLearnSnapshot = text;
+    } catch (e) {
+        console.error('loadLearning failed:', e);
+        learning = [];
+    }
+    const nb = document.getElementById('navLearnCount');
+    if (nb) nb.textContent = learning.length;
+}
+
+function saveLearning() {
+    const payload = JSON.stringify(learning);
+    learnSavePending = true;
+    return fetch(LEARN_API, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: payload
+    }).then(r => {
+        if (!r.ok) throw new Error('HTTP ' + r.status);
+        lastLearnSnapshot = payload;   // our PUT IS the new server state
+    }).catch(e => {
+        console.error('saveLearning failed:', e);
+        showToast('Failed to save resources', 'error');
+    }).finally(() => { learnSavePending = false; });
+}
+
+// Pull /api/learning every POLL_INTERVAL_MS so adds/edits from other PCs appear here.
+async function pollLearning() {
+    if (learnSavePending) return;
+    if (editingLearnId || pendingLearnDeleteId) return;
+    if (document.querySelector('.modal-overlay.active')) return;
+    try {
+        const r = await fetch(LEARN_API, { cache: 'no-store' });
+        if (!r.ok) return;
+        const text = await r.text();
+        if (text === lastLearnSnapshot) return;   // unchanged
+        const data = JSON.parse(text);
+        if (!Array.isArray(data)) return;
+        lastLearnSnapshot = text;
+        learning = data;
+        renderLearning();
+        const nb = document.getElementById('navLearnCount');
+        if (nb) nb.textContent = learning.length;
+    } catch (_) { /* transient — ignore */ }
+}
+
+function openLearnUrl(url) {
+    if (!url) return;
+    const safe = /^https?:\/\//i.test(url) ? url : 'https://' + url;
+    window.open(safe, '_blank', 'noopener,noreferrer');
+}
+
+function refreshLearnCategoryUI() {
+    const cats = [...new Set(learning.map(d => d.category || 'Uncategorized'))].sort();
+    const sel = document.getElementById('learnCategoryFilter');
+    if (sel) {
+        const cur = sel.value;
+        sel.innerHTML = '<option value="all">All Categories</option>' +
+            cats.map(c => `<option value="${esc(c)}">${esc(c)}</option>`).join('');
+        sel.value = cats.includes(cur) || cur === 'all' ? cur : 'all';
+    }
+    const catSel = document.getElementById('learnCategory');
+    if (catSel) {
+        const cur = catSel.value;
+        catSel.innerHTML =
+            '<option value="" disabled>Please select...</option>' +
+            cats.map(c => `<option value="${esc(c)}">${esc(c)}</option>`).join('') +
+            '<option value="__new__">+ New category…</option>';
+        if (cur && (cats.includes(cur) || cur === '__new__')) catSel.value = cur;
+        else catSel.selectedIndex = 0;
+    }
+}
+
+function renderLearning() {
+    refreshLearnCategoryUI();
+    const container = document.getElementById('learnGroups');
+    if (!container) return;
+    const search = (document.getElementById('learnSearch')?.value || '').toLowerCase().trim();
+    const catFilter = document.getElementById('learnCategoryFilter')?.value || 'all';
+
+    const filtered = learning.filter(d => {
+        if (catFilter !== 'all' && (d.category || 'Uncategorized') !== catFilter) return false;
+        if (!search) return true;
+        const hay = `${d.title} ${d.url} ${d.description} ${d.category}`.toLowerCase();
+        return hay.includes(search);
+    });
+
+    if (!filtered.length) {
+        container.innerHTML = `<div class="dork-empty">No resources match your filters. Click <strong>New Resource</strong> to add one.</div>`;
+        return;
+    }
+
+    const groups = {};
+    filtered.forEach(d => {
+        const k = d.category || 'Uncategorized';
+        (groups[k] = groups[k] || []).push(d);
+    });
+
+    const html = Object.keys(groups).sort().map(cat => {
+        const items = groups[cat].map(d => {
+            // Split URL into host + path so the host is dimmed and the path
+            // (the more meaningful bit for course resources) reads brighter.
+            let host = '', rest = '';
+            try {
+                const u = new URL(d.url);
+                host = u.hostname.replace(/^www\./, '');
+                rest = (u.pathname + u.search + u.hash) || '';
+            } catch (_) {
+                rest = d.url || '';
+            }
+            return `
+            <button class="dork-card" data-id="${esc(d.id)}" data-action="open" type="button" title="${esc(d.url)}">
+                <div class="dork-card-head">
+                    <div class="dork-card-title">${esc(d.title || '(untitled)')}</div>
+                    <span class="dork-card-edit" data-id="${esc(d.id)}" data-action="edit" title="Edit" aria-label="Edit resource" role="button">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+                    </span>
+                </div>
+                <div class="learn-url"><span class="learn-url-host">${esc(host)}</span>${esc(rest)}</div>
+                ${d.description ? `<div class="dork-card-desc">${esc(d.description)}</div>` : ''}
+                <div class="dork-card-foot">
+                    <span class="dork-card-tag">${esc(d.category || 'Uncategorized')}</span>
+                    <span class="dork-run-pill">
+                        Open
+                        <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M7 17L17 7M9 7h8v8"/></svg>
+                    </span>
+                </div>
+            </button>`;
+        }).join('');
+        return `
+            <div class="dork-group">
+                <div class="dork-group-title">
+                    <span class="dork-group-icon">${categoryIconSvg(cat)}</span>
+                    <div>
+                        <h4>${esc(cat)}</h4>
+                        <span class="dork-group-sub">${groups[cat].length} ${groups[cat].length === 1 ? 'resource' : 'resources'}</span>
+                    </div>
+                    <span class="dork-group-count">${groups[cat].length}</span>
+                </div>
+                <div class="dork-grid learn-grid">${items}</div>
+            </div>
+        `;
+    }).join('');
+
+    container.innerHTML = html;
+}
+
+function openLearnModal(id) {
+    editingLearnId = id || null;
+    const title = document.getElementById('learnModalTitle');
+    const delBtn = document.getElementById('learnDeleteBtn');
+
+    refreshLearnCategoryUI();
+    const catSel = document.getElementById('learnCategory');
+    const catNew = document.getElementById('learnCategoryNew');
+    catNew.value = '';
+    catNew.style.display = 'none';
+
+    if (id) {
+        const d = learning.find(x => x.id === id);
+        if (!d) return;
+        title.lastChild.nodeValue = 'Edit Resource';
+        document.getElementById('learnTitle').value = d.title || '';
+        document.getElementById('learnUrl').value = d.url || '';
+        document.getElementById('learnDescription').value = d.description || '';
+        if (d.category && [...catSel.options].some(o => o.value === d.category)) {
+            catSel.value = d.category;
+        } else if (d.category) {
+            catSel.value = '__new__';
+            catNew.value = d.category;
+            catNew.style.display = '';
+        } else {
+            catSel.selectedIndex = 0;
+        }
+        delBtn.style.display = '';
+    } else {
+        title.lastChild.nodeValue = 'New Resource';
+        document.getElementById('learnTitle').value = '';
+        document.getElementById('learnUrl').value = '';
+        document.getElementById('learnDescription').value = '';
+        catSel.selectedIndex = 0;
+        delBtn.style.display = 'none';
+    }
+    document.getElementById('learnModal').classList.add('active');
+    setTimeout(() => document.getElementById('learnTitle').focus(), 50);
+}
+
+function closeLearnModal() {
+    document.getElementById('learnModal').classList.remove('active');
+    editingLearnId = null;
+}
+
+async function saveLearnFromModal() {
+    const title = document.getElementById('learnTitle').value.trim();
+    const catSel = document.getElementById('learnCategory');
+    const catNew = document.getElementById('learnCategoryNew');
+    let category;
+    if (catSel.value === '__new__') {
+        category = catNew.value.trim();
+        if (!category) { showToast('Please enter the new category name', 'error'); return; }
+    } else {
+        category = catSel.value.trim();
+    }
+    if (!category) { showToast('Please select a category', 'error'); return; }
+
+    const url = document.getElementById('learnUrl').value.trim();
+    const description = document.getElementById('learnDescription').value.trim();
+
+    if (!title) { showToast('Title is required', 'error'); return; }
+    if (!url)   { showToast('URL is required', 'error'); return; }
+    if (url.length > 2000) { showToast('URL too long (max 2000 chars)', 'error'); return; }
+    if (!/^https?:\/\//i.test(url)) { showToast('URL must start with http:// or https://', 'error'); return; }
+
+    const now = new Date().toISOString();
+    if (editingLearnId) {
+        // Match read_learning's key order so the saved snapshot equals the
+        // next poll's response and we don't trigger a redundant re-render.
+        const idx = learning.findIndex(x => x.id === editingLearnId);
+        if (idx >= 0) {
+            const prev = learning[idx];
+            learning[idx] = {
+                id: prev.id, category, title, url, description,
+                created_at: prev.created_at || now,
+            };
+        }
+        showToast('Resource updated', 'success');
+    } else {
+        learning.push({
+            id: 'l_' + Date.now().toString(36) + '_' + Math.random().toString(36).slice(2, 8),
+            category, title, url, description, created_at: now
+        });
+        showToast('Resource added', 'success');
+    }
+    await saveLearning();
+    closeLearnModal();
+    renderLearning();
+    const nb = document.getElementById('navLearnCount');
+    if (nb) nb.textContent = learning.length;
+}
+
+// Track which resource is queued for deletion so the centered confirmation
+// modal can act on it. Set when the trash icon in the edit modal is clicked
+// (or when a card's edit → delete path is taken), cleared on cancel/confirm.
+let pendingLearnDeleteId = null;
+
+function openLearnDeleteModal(id) {
+    if (!id) return;
+    const d = learning.find(x => x.id === id);
+    if (!d) return;
+    pendingLearnDeleteId = id;
+    document.getElementById('learnDeleteTitle').textContent = d.title || '(untitled)';
+    // Edit modal stays underneath but is hidden so the confirmation has
+    // exclusive focus. Reopens automatically on cancel.
+    document.getElementById('learnModal')?.classList.remove('active');
+    document.getElementById('learnDeleteModal').classList.add('active');
+}
+
+function closeLearnDeleteModal() {
+    document.getElementById('learnDeleteModal').classList.remove('active');
+    pendingLearnDeleteId = null;
+    // Restore the edit modal so the user can keep editing if they cancelled.
+    if (editingLearnId) document.getElementById('learnModal')?.classList.add('active');
+}
+
+async function confirmLearnDelete() {
+    const id = pendingLearnDeleteId;
+    if (!id) { closeLearnDeleteModal(); return; }
+    const btn = document.getElementById('confirmLearnDeleteBtn');
+    if (btn) btn.disabled = true;   // guard against double-click → duplicate PUTs
+    try {
+        learning = learning.filter(x => x.id !== id);
+        pendingLearnDeleteId = null;
+        editingLearnId = null;
+        document.getElementById('learnDeleteModal').classList.remove('active');
+        document.getElementById('learnModal').classList.remove('active');
+        await saveLearning();
+        renderLearning();
+        const nb = document.getElementById('navLearnCount');
+        if (nb) nb.textContent = learning.length;
+        showToast('Resource deleted', 'info');
+    } finally {
+        if (btn) btn.disabled = false;
+    }
+}
+
+function deleteLearnFromModal() {
+    // Called by the Delete button inside the edit modal — defer to the
+    // centered confirmation modal instead of using the browser's native
+    // confirm() popup at the top of the screen.
+    if (!editingLearnId) return;
+    openLearnDeleteModal(editingLearnId);
+}
+
+function bindLearnEvents() {
+    document.getElementById('addLearnBtn')?.addEventListener('click', () => openLearnModal(null));
+    document.getElementById('closeLearnModal')?.addEventListener('click', closeLearnModal);
+    document.getElementById('cancelLearnModal')?.addEventListener('click', closeLearnModal);
+    document.getElementById('saveLearnBtn')?.addEventListener('click', saveLearnFromModal);
+    document.getElementById('learnDeleteBtn')?.addEventListener('click', deleteLearnFromModal);
+
+    document.getElementById('learnSearch')?.addEventListener('input', renderLearning);
+    document.getElementById('learnCategoryFilter')?.addEventListener('change', renderLearning);
+
+    document.getElementById('learnCategory')?.addEventListener('change', e => {
+        const inp = document.getElementById('learnCategoryNew');
+        if (!inp) return;
+        if (e.target.value === '__new__') {
+            inp.style.display = '';
+            inp.value = '';
+            setTimeout(() => inp.focus(), 30);
+        } else {
+            inp.style.display = 'none';
+        }
+    });
+
+    document.getElementById('learnModal')?.addEventListener('click', e => {
+        if (e.target.id === 'learnModal') closeLearnModal();
+    });
+
+    // Centered delete confirmation
+    document.getElementById('closeLearnDeleteModal')?.addEventListener('click', closeLearnDeleteModal);
+    document.getElementById('cancelLearnDeleteModal')?.addEventListener('click', closeLearnDeleteModal);
+    document.getElementById('confirmLearnDeleteBtn')?.addEventListener('click', confirmLearnDelete);
+    document.getElementById('learnDeleteModal')?.addEventListener('click', e => {
+        if (e.target.id === 'learnDeleteModal') closeLearnDeleteModal();
+    });
+
+    document.getElementById('learnGroups')?.addEventListener('click', e => {
+        const editBtn = e.target.closest('[data-action="edit"]');
+        if (editBtn) {
+            e.stopPropagation();
+            openLearnModal(editBtn.dataset.id);
+            return;
+        }
+        const card = e.target.closest('[data-action="open"]');
+        if (card) {
+            const d = learning.find(x => x.id === card.dataset.id);
+            if (d) openLearnUrl(d.url);
         }
     });
 }

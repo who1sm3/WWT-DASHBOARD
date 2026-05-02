@@ -9,8 +9,12 @@ lives inside the project folder. Copying the whole project folder to
 another PC carries the data with it.
 
 Endpoints:
-    GET /api/alerts        -> returns the shared JSON array
-    PUT /api/alerts        -> replaces the shared JSON array (body = JSON array)
+    GET  /api/alerts       -> returns the shared alerts JSON array
+    PUT  /api/alerts       -> replaces the shared alerts JSON array (body = JSON array)
+    GET  /api/dorks        -> returns the saved dork queries
+    PUT  /api/dorks        -> replaces the saved dork queries (body = JSON array)
+    GET  /api/tickets      -> last 20 generated ticket codes
+    POST /api/tickets      -> generate a new ticket code (body = {prefix, date})
     anything else          -> static file from this folder
 
 Run:
@@ -35,6 +39,8 @@ ROOT       = os.path.dirname(os.path.abspath(__file__))
 DB_FILE    = os.path.join(ROOT, "server_data.db")
 DORK_DB    = os.path.join(ROOT, "dorking_data.db")
 DORK_SEED  = os.path.join(ROOT, "dorking_data.json")  # default dorks seeded into the DB on first run
+LEARN_DB   = os.path.join(ROOT, "learning_data.db")
+LEARN_SEED = os.path.join(ROOT, "learning_data.json") # default learning resources seeded on first run
 JSON_FILE  = os.path.join(ROOT, "server_data.json")   # legacy, used once for migration
 PORT       = int(sys.argv[1]) if len(sys.argv) > 1 else 3000
 
@@ -234,6 +240,187 @@ def write_dorks(arr):
     _dork_replace_all(arr)
 
 
+# --- Learning resources (free certification courses, mirrors dork pattern) ---
+
+def load_default_learning():
+    """Read learning_data.json (same format conventions as dorking_data.json)."""
+    if not os.path.exists(LEARN_SEED):
+        return []
+    try:
+        with open(LEARN_SEED, "r", encoding="utf-8") as f:
+            data = json.load(f)
+    except Exception as e:
+        print(f"Could not read {LEARN_SEED}: {e}")
+        return []
+    if isinstance(data, list):
+        records = data
+    elif isinstance(data, dict):
+        records = data.get("records") or data.get("resources") or []
+    else:
+        records = []
+    cleaned = []
+    for r in records:
+        if not isinstance(r, dict):
+            continue
+        if not r.get("url"):
+            continue
+        cleaned.append({
+            "category": r.get("category") or "",
+            "title": r.get("title") or "",
+            "url": r["url"],
+            "description": r.get("description") or "",
+        })
+    return cleaned
+
+
+def _stable_learn_key(d):
+    import hashlib
+    raw = "learn-default::" + (d.get("category") or "") + "::" + (d.get("title") or "") + "::" + (d.get("url") or "")
+    return hashlib.sha1(raw.encode("utf-8")).hexdigest()
+
+
+def init_learn_db():
+    with _connect(LEARN_DB) as conn:
+        conn.execute("""
+            CREATE TABLE IF NOT EXISTS learning (
+                id          TEXT PRIMARY KEY,
+                pos         INTEGER NOT NULL,
+                category    TEXT,
+                title       TEXT,
+                url         TEXT NOT NULL,
+                description TEXT,
+                created_at  TEXT,
+                seed_key    TEXT
+            )
+        """)
+        conn.execute("CREATE INDEX IF NOT EXISTS idx_learn_pos ON learning(pos)")
+        conn.commit()
+
+    import time, uuid
+    now = time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime())
+
+    defaults = load_default_learning()
+    if not defaults:
+        return
+
+    # Backfill seed_key on existing rows so user-edited resources still match.
+    with _connect(LEARN_DB) as conn:
+        rows = conn.execute(
+            "SELECT id, category, title, url, seed_key FROM learning"
+        ).fetchall()
+        used_keys = {r[4] for r in rows if r[4]}
+        by_url = {}
+        by_cat_title = {}
+        for rid, cat, title, u, sk in rows:
+            if sk:
+                continue
+            by_url.setdefault(u or "", []).append(rid)
+            by_cat_title.setdefault(((cat or ""), (title or "")), []).append(rid)
+
+        claimed = set()
+        updates = []
+        for d in defaults:
+            key = _stable_learn_key(d)
+            if key in used_keys:
+                continue
+            candidates = [i for i in by_url.get(d["url"], []) if i not in claimed]
+            if not candidates:
+                candidates = [i for i in by_cat_title.get((d["category"], d["title"]), []) if i not in claimed]
+            if candidates:
+                rid = candidates[0]
+                claimed.add(rid)
+                used_keys.add(key)
+                updates.append((key, rid))
+        if updates:
+            conn.executemany("UPDATE learning SET seed_key = ? WHERE id = ?", updates)
+            conn.commit()
+
+    with _connect(LEARN_DB) as conn:
+        seeded = {r[0] for r in conn.execute(
+            "SELECT seed_key FROM learning WHERE seed_key IS NOT NULL"
+        ).fetchall()}
+    new_defaults = [d for d in defaults if _stable_learn_key(d) not in seeded]
+    if not new_defaults:
+        return
+
+    new_entries = [{
+        "id": uuid.uuid4().hex,
+        "category": d["category"], "title": d["title"], "url": d["url"],
+        "description": d.get("description", ""), "created_at": now,
+        "seed_key": _stable_learn_key(d),
+    } for d in new_defaults]
+
+    existing = read_learning()
+    if not existing:
+        _learn_replace_all(new_entries)
+    else:
+        _learn_replace_all(existing + new_entries)
+        print(f"Seeded {len(new_entries)} new learning resource(s).")
+
+
+def read_learning():
+    with _connect(LEARN_DB) as conn:
+        rows = conn.execute(
+            "SELECT id, category, title, url, description, created_at FROM learning ORDER BY pos ASC"
+        ).fetchall()
+    return [
+        {"id": r[0], "category": r[1] or "", "title": r[2] or "", "url": r[3] or "",
+         "description": r[4] or "", "created_at": r[5] or ""}
+        for r in rows
+    ]
+
+
+def _learn_replace_all(arr):
+    staged = []
+    for i, rec in enumerate(arr):
+        if not isinstance(rec, dict):
+            continue
+        rid = rec.get("id")
+        u   = rec.get("url")
+        if not rid or not u or not isinstance(u, str):
+            continue
+        # Reject non-http(s) URLs and oversize values to keep junk out of the DB.
+        u = u.strip()
+        if len(u) > 2000:
+            continue
+        if not (u.startswith("http://") or u.startswith("https://")):
+            continue
+        staged.append((str(rid), i, rec, u))
+    with _connect(LEARN_DB) as conn:
+        try:
+            conn.execute("BEGIN IMMEDIATE")
+            existing_keys = {r[0]: r[1] for r in conn.execute(
+                "SELECT id, seed_key FROM learning"
+            ).fetchall()}
+            conn.execute("DELETE FROM learning")
+            rows = []
+            for rid, pos, rec, u in staged:
+                seed_key = rec.get("seed_key")
+                if seed_key is None:
+                    seed_key = existing_keys.get(rid)
+                rows.append((
+                    rid, pos,
+                    rec.get("category") or "",
+                    rec.get("title") or "",
+                    u,
+                    rec.get("description") or "",
+                    rec.get("created_at") or "",
+                    seed_key,
+                ))
+            conn.executemany(
+                "INSERT OR REPLACE INTO learning (id, pos, category, title, url, description, created_at, seed_key) VALUES (?, ?, ?, ?, ?, ?, ?, ?)",
+                rows,
+            )
+            conn.commit()
+        except Exception:
+            conn.rollback()
+            raise
+
+
+def write_learning(arr):
+    _learn_replace_all(arr)
+
+
 def init_db():
     with _connect() as conn:
         conn.execute("""
@@ -320,6 +507,7 @@ def safe_static_path(url_path):
 _BLOCKED_STATIC = {
     "server_data.db", "server_data.db-wal", "server_data.db-shm", "server_data.json",
     "dorking_data.db", "dorking_data.db-wal", "dorking_data.db-shm",
+    "learning_data.db", "learning_data.db-wal", "learning_data.db-shm",
 }
 # Source files and dotfiles must never leak over the static route.
 _BLOCKED_EXTENSIONS = {".py", ".pyc", ".pyo", ".db", ".sqlite", ".sqlite3", ".env", ".ini"}
@@ -339,7 +527,10 @@ class Handler(BaseHTTPRequestHandler):
 
     # --- API ---
     def _send_json(self, status, payload):
-        body = json.dumps(payload).encode("utf-8")
+        # Compact separators + ensure_ascii=False match JS's JSON.stringify
+        # byte-for-byte (raw UTF-8, no whitespace), so polling snapshots can
+        # short-circuit cleanly even when records contain non-ASCII characters.
+        body = json.dumps(payload, separators=(",", ":"), ensure_ascii=False).encode("utf-8")
         self.send_response(status)
         self.send_header("Content-Type", "application/json; charset=utf-8")
         self.send_header("Cache-Control", "no-store")
@@ -354,6 +545,8 @@ class Handler(BaseHTTPRequestHandler):
             self._send_json(200, read_data()); return
         if route == "/api/dorks":
             self._send_json(200, read_dorks()); return
+        if route == "/api/learning":
+            self._send_json(200, read_learning()); return
         if route == "/api/tickets":
             self._send_json(200, _ticket_history(limit=20)); return
 
@@ -409,7 +602,7 @@ class Handler(BaseHTTPRequestHandler):
 
     def do_PUT(self):
         route = self.path.split("?", 1)[0]
-        if route not in ("/api/alerts", "/api/dorks"):
+        if route not in ("/api/alerts", "/api/dorks", "/api/learning"):
             self.send_error(404); return
 
         length = int(self.headers.get("Content-Length") or 0)
@@ -423,8 +616,10 @@ class Handler(BaseHTTPRequestHandler):
                 raise ValueError("Body must be a JSON array")
             if route == "/api/alerts":
                 write_data(parsed)
-            else:
+            elif route == "/api/dorks":
                 write_dorks(parsed)
+            else:
+                write_learning(parsed)
         except Exception as e:
             self._send_json(400, {"ok": False, "error": str(e)}); return
 
@@ -572,12 +767,14 @@ def lan_ips():
 def main():
     init_db()
     init_dork_db()
+    init_learn_db()
     httpd = ThreadingHTTPServer(("0.0.0.0", PORT), Handler)
     print("-" * 60)
     print(f"  AlertTracker server running on port {PORT}")
-    print(f"  Alerts DB:  {DB_FILE}")
-    print(f"  Dorks DB:   {DORK_DB}")
-    print(f"  Tickets:    {TICKET_FILE}")
+    print(f"  Alerts DB:    {DB_FILE}")
+    print(f"  Dorks DB:     {DORK_DB}")
+    print(f"  Learning DB:  {LEARN_DB}")
+    print(f"  Tickets:      {TICKET_FILE}")
     print()
     print("  Open on this PC:")
     print(f"    http://localhost:{PORT}")

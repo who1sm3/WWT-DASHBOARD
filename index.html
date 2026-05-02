@@ -83,6 +83,11 @@
                 <span>Dorking</span>
                 <span class="nav-badge" id="navDorkCount">0</span>
             </button>
+            <button class="nav-item" data-view="learning">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 3h6a4 4 0 014 4v14a3 3 0 00-3-3H2z"/><path d="M22 3h-6a4 4 0 00-4 4v14a3 3 0 013-3h7z"/></svg>
+                <span>Learning</span>
+                <span class="nav-badge" id="navLearnCount">0</span>
+            </button>
             <button class="nav-item" data-view="ticket">
                 <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 9a3 3 0 003 3v0a3 3 0 00-3 3v2a2 2 0 002 2h16a2 2 0 002-2v-2a3 3 0 00-3-3v0a3 3 0 003-3V7a2 2 0 00-2-2H4a2 2 0 00-2 2z"/><path d="M13 5v2M13 11v2M13 17v2"/></svg>
                 <span>Ticket Generator</span>
@@ -209,6 +214,7 @@
                     <option value="Apache Tomcat">Apache Tomcat</option>
                     <option value="WinDev/WebDev Error">WinDev/WebDev Error</option>
                     <option value="phpMyAdmin">phpMyAdmin</option>
+                    <option value="SEO Spam">SEO Spam</option>
                 </select>
             </div>
             <div class="select-wrap">
@@ -323,6 +329,41 @@
         <div id="dorkGroups" class="dork-groups"></div>
     </section>
 
+    <!-- Learning View — free certification courses, seeded from learning_data.json -->
+    <section class="view" id="viewLearning" aria-label="Learning Resources">
+        <section class="controls-section" aria-label="Learning filters">
+            <div class="controls-bar">
+                <div class="search-box">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg>
+                    <input type="text" id="learnSearch" placeholder="Search resources..." autocomplete="off">
+                    <button type="button" class="search-clear" data-clear="learnSearch" aria-label="Clear search" title="Clear">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M18 6L6 18M6 6l12 12"/></svg>
+                    </button>
+                </div>
+                <div class="select-wrap">
+                    <select id="learnCategoryFilter" aria-label="Filter by category">
+                        <option value="all">All Categories</option>
+                    </select>
+                </div>
+                <button class="btn btn-primary" id="addLearnBtn">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14M5 12h14"/></svg>
+                    <span>New Resource</span>
+                </button>
+            </div>
+        </section>
+
+        <div class="dork-hint panel" style="margin-top:14px;">
+            <div class="panel-head">
+                <div>
+                    <h3>Free Certification &amp; Courses</h3>
+                    <span class="chart-sub">Curated by SyberSeeker — click any card to open the course in a new tab. Edit or add your own resources to keep this library up to date.</span>
+                </div>
+            </div>
+        </div>
+
+        <div id="learnGroups" class="dork-groups"></div>
+    </section>
+
     <!-- Ticket Generator View (native) -->
     <section class="view" id="viewTicket" aria-label="Ticket Generator">
         <div class="ticket-layout">
@@ -411,7 +452,7 @@
                     <div class="form-group"><label>Release Date</label><input type="date" id="newReleaseDate"></div>
                 </div>
                 <div class="form-row">
-                    <div class="form-group"><label>Type <span class="required">*</span></label><select id="newType"><option value="" disabled selected>Select type...</option><option>Admin Login</option><option>PHP Info</option><option>PHP Error</option><option>Index List</option><option>Vulnerability</option><option>Exposed Data</option><option>Exposed Git Repo</option><option>Debug Bar</option><option>IDOR</option><option>Apache Tomcat</option><option>phpMyAdmin</option><option>WinDev/WebDev Error</option></select></div>
+                    <div class="form-group"><label>Type <span class="required">*</span></label><select id="newType"><option value="" disabled selected>Select type...</option><option>Admin Login</option><option>PHP Info</option><option>PHP Error</option><option>Index List</option><option>Vulnerability</option><option>Exposed Data</option><option>Exposed Git Repo</option><option>Debug Bar</option><option>IDOR</option><option>Apache Tomcat</option><option>phpMyAdmin</option><option>WinDev/WebDev Error</option><option>SEO Spam</option></select></div>
                     <div class="form-group"><label>Status <span class="required">*</span></label><select id="newAlertStatus"><option value="" disabled selected>Select status...</option><option>Open</option><option>Waiting</option><option>CTM</option><option>Closed</option></select></div>
                 </div>
                 <div class="form-group"><label>IoC <span class="hint">(one per line for multiple)</span></label><textarea id="newIoC" placeholder="URL or indicator — one per line" rows="3"></textarea></div>
@@ -432,7 +473,7 @@
                     <div class="form-group"><label>Release Date</label><input type="date" id="editReleaseDate"></div>
                 </div>
                 <div class="form-row">
-                    <div class="form-group"><label>Type</label><select id="editType"><option>Admin Login</option><option>PHP Info</option><option>PHP Error</option><option>Index List</option><option>Vulnerability</option><option>Exposed Data</option><option>Exposed Git Repo</option><option>Debug Bar</option><option>IDOR</option><option>Apache Tomcat</option><option>phpMyAdmin</option><option>WinDev/WebDev Error</option></select></div>
+                    <div class="form-group"><label>Type</label><select id="editType"><option>Admin Login</option><option>PHP Info</option><option>PHP Error</option><option>Index List</option><option>Vulnerability</option><option>Exposed Data</option><option>Exposed Git Repo</option><option>Debug Bar</option><option>IDOR</option><option>Apache Tomcat</option><option>phpMyAdmin</option><option>WinDev/WebDev Error</option><option>SEO Spam</option></select></div>
                     <div class="form-group"><label>Status</label><select id="editAlertStatus"><option>Open</option><option>Waiting</option><option>CTM</option><option>Closed</option></select></div>
                 </div>
                 <div class="form-group"><label>IoC <span class="hint">(one per line for multiple)</span></label><textarea id="editIoC" rows="3"></textarea></div>
@@ -479,6 +520,72 @@
                 <button class="btn btn-danger" id="dorkDeleteBtn" style="margin-right:auto;display:none">Delete</button>
                 <button class="btn btn-outline" id="cancelDorkModal">Cancel</button>
                 <button class="btn btn-primary" id="saveDorkBtn">Save Dork</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Dork Delete Confirmation -->
+    <div class="modal-overlay" id="dorkDeleteModal">
+        <div class="modal modal-sm">
+            <div class="modal-header modal-header-danger">
+                <h2>
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 6h18"/><path d="M19 6v14a2 2 0 01-2 2H7a2 2 0 01-2-2V6"/><path d="M8 6V4a2 2 0 012-2h4a2 2 0 012 2v2"/></svg>
+                    Delete dork?
+                </h2>
+                <button class="modal-close" id="closeDorkDeleteModal">&times;</button>
+            </div>
+            <div class="modal-body">
+                <p style="margin:0 0 8px;color:var(--text-primary);font-weight:600" id="dorkDeleteTitle">—</p>
+                <p style="margin:0;color:var(--text-secondary);font-size:13px;line-height:1.5">This dork query will be removed from your library. Default dorks tracked by <code>seed_key</code> won't be re-added on the next server restart.</p>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-outline" id="cancelDorkDeleteModal">Cancel</button>
+                <button class="btn btn-danger" id="confirmDorkDeleteBtn">Delete</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Learning Delete Confirmation -->
+    <div class="modal-overlay" id="learnDeleteModal">
+        <div class="modal modal-sm">
+            <div class="modal-header modal-header-danger">
+                <h2>
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 6h18"/><path d="M19 6v14a2 2 0 01-2 2H7a2 2 0 01-2-2V6"/><path d="M8 6V4a2 2 0 012-2h4a2 2 0 012 2v2"/></svg>
+                    Delete resource?
+                </h2>
+                <button class="modal-close" id="closeLearnDeleteModal">&times;</button>
+            </div>
+            <div class="modal-body">
+                <p style="margin:0 0 8px;color:var(--text-primary);font-weight:600" id="learnDeleteTitle">—</p>
+                <p style="margin:0;color:var(--text-secondary);font-size:13px;line-height:1.5">This resource will be removed from your library. You can always re-seed it from <code>learning_data.json</code> by adjusting its <code>seed_key</code>, but the simplest path is to add it again manually if you change your mind.</p>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-outline" id="cancelLearnDeleteModal">Cancel</button>
+                <button class="btn btn-danger" id="confirmLearnDeleteBtn">Delete</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Learning Add/Edit Modal -->
+    <div class="modal-overlay" id="learnModal">
+        <div class="modal">
+            <div class="modal-header"><h2 id="learnModalTitle"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 3h6a4 4 0 014 4v14a3 3 0 00-3-3H2z"/><path d="M22 3h-6a4 4 0 00-4 4v14a3 3 0 013-3h7z"/></svg>New Resource</h2><button class="modal-close" id="closeLearnModal">&times;</button></div>
+            <div class="modal-body">
+                <div class="form-group"><label>Title <span class="required">*</span></label><input type="text" id="learnTitle" placeholder="e.g. TCM Security Practical Help Desk"></div>
+                <div class="form-group">
+                    <label>Category</label>
+                    <select id="learnCategory">
+                        <option value="" disabled selected>Please select...</option>
+                    </select>
+                    <input type="text" id="learnCategoryNew" placeholder="Enter new category name" style="display:none;margin-top:8px">
+                </div>
+                <div class="form-group"><label>URL <span class="required">*</span></label><input type="url" id="learnUrl" placeholder="https://..."></div>
+                <div class="form-group"><label>Description</label><textarea id="learnDescription" placeholder="What this resource teaches..." rows="3"></textarea></div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-danger" id="learnDeleteBtn" style="margin-right:auto;display:none">Delete</button>
+                <button class="btn btn-outline" id="cancelLearnModal">Cancel</button>
+                <button class="btn btn-primary" id="saveLearnBtn">Save Resource</button>
             </div>
         </div>
     </div>
